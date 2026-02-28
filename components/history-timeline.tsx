@@ -50,7 +50,7 @@ export default function HistoryTimeline({
 
                 {/* Thumbnail popover */}
                 {hoveredId === entry.id && entry.imageUrl && (
-                  <div className="absolute right-6 top-1/2 -translate-y-1/2 z-50 p-1 bg-surface border border-border rounded-lg shadow-lg">
+                  <div className="absolute top-1/2 right-full mr-2 -translate-y-1/2 z-50 w-[6.5rem] p-1 bg-surface border border-border rounded-lg shadow-lg">
                     <img
                       src={entry.imageUrl}
                       alt="History thumbnail"
