@@ -37,6 +37,7 @@ export default function Home() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Snapshot of "current" working state to return to after browsing history
+  const [activeHistoryId, setActiveHistoryId] = useState<string | null>(null);
   const [savedCurrent, setSavedCurrent] = useState<{
     prompt: string;
     brandData: BrandData | null;
@@ -197,6 +198,7 @@ export default function Home() {
     setAspectRatio(entry.aspectRatio);
     setResolution(entry.resolution);
     setImageResult({ imageUrl: entry.imageUrl, model: entry.model });
+    setActiveHistoryId(entry.id);
   }
 
   function handleReturnToCurrent() {
@@ -209,6 +211,7 @@ export default function Home() {
       setResolution(savedCurrent.resolution);
       setImageResult(savedCurrent.imageResult);
       setSavedCurrent(null);
+      setActiveHistoryId(null);
     }
   }
 
@@ -259,6 +262,7 @@ export default function Home() {
         <div className="shrink-0 w-8">
           <HistoryTimeline
             entries={history}
+            activeId={activeHistoryId}
             onSelect={handleSelectHistory}
             onReturnToCurrent={handleReturnToCurrent}
           />

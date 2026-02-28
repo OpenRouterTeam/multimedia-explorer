@@ -5,10 +5,12 @@ import type { HistoryEntry } from "@/lib/types";
 
 export default function HistoryTimeline({
   entries,
+  activeId,
   onSelect,
   onReturnToCurrent,
 }: {
   entries: HistoryEntry[];
+  activeId: string | null;
   onSelect: (entry: HistoryEntry) => void;
   onReturnToCurrent: () => void;
 }) {
@@ -24,7 +26,9 @@ export default function HistoryTimeline({
       <button
         type="button"
         onClick={onReturnToCurrent}
-        className="w-3 h-3 rounded-full bg-accent border-2 border-accent hover:scale-125 transition-transform cursor-pointer"
+        className={`w-3 h-3 rounded-full border-2 border-accent hover:scale-125 transition-all cursor-pointer ${
+          activeId === null ? "bg-accent ring-2 ring-accent/30" : "bg-accent/40"
+        }`}
         title="Current"
       />
 
@@ -44,8 +48,12 @@ export default function HistoryTimeline({
                 onClick={() => onSelect(entry)}
               >
                 <div
-                  className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                    hoveredId === entry.id ? "bg-muted scale-125" : "bg-border"
+                  className={`w-2.5 h-2.5 rounded-full transition-all ${
+                    activeId === entry.id
+                      ? "bg-accent scale-125 ring-2 ring-accent/30"
+                      : hoveredId === entry.id
+                        ? "bg-muted scale-125"
+                        : "bg-border"
                   }`}
                 />
 
