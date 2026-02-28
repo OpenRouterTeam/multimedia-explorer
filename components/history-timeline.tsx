@@ -34,18 +34,19 @@ export default function HistoryTimeline({
           <div className="w-px h-2 bg-border mt-2" />
 
           {/* History dots (newest first) */}
-          <div className="flex flex-col items-center gap-2 mt-2">
+          <div className="flex flex-col items-center mt-2">
             {entries.map((entry) => (
               <div
                 key={entry.id}
-                className="relative"
+                className="relative flex items-center justify-center py-[5px] px-2 cursor-pointer"
                 onMouseEnter={() => setHoveredId(entry.id)}
                 onMouseLeave={() => setHoveredId(null)}
+                onClick={() => onSelect(entry)}
               >
-                <button
-                  type="button"
-                  onClick={() => onSelect(entry)}
-                  className="w-2.5 h-2.5 rounded-full bg-border hover:bg-muted transition-colors cursor-pointer hover:scale-125"
+                <div
+                  className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                    hoveredId === entry.id ? "bg-muted scale-125" : "bg-border"
+                  }`}
                 />
 
                 {/* Thumbnail popover */}
