@@ -26,3 +26,16 @@ export type CardId = "mood" | "model" | "inputImages" | "output";
 
 export const ASPECT_RATIOS = ["1:1", "16:9", "9:16", "4:3", "3:2"];
 export const RESOLUTIONS = ["1K", "2K"];
+
+export interface HistoryEntry {
+  id: string;
+  timestamp: number;
+  /** Loaded from IndexedDB at runtime, not persisted in localStorage */
+  imageUrl?: string;
+  model: string;
+  prompt: string;
+  brandData: import("@/components/moodboard").BrandData | null;
+  referenceImages: ReferenceImage[];
+  aspectRatio: string;
+  resolution: string;
+}

@@ -12,6 +12,8 @@ export default function GenerateForm({
   referenceImages,
   aspectRatio,
   resolution,
+  prompt,
+  onPromptChange,
   onResult,
   onLoading,
   onAuthNeeded,
@@ -22,11 +24,12 @@ export default function GenerateForm({
   referenceImages: ReferenceImage[];
   aspectRatio: string;
   resolution: string;
+  prompt: string;
+  onPromptChange: (prompt: string) => void;
   onResult: (result: { imageUrl: string; model: string } | null) => void;
   onLoading: (loading: boolean) => void;
   onAuthNeeded: (key: string) => void;
 }) {
-  const [prompt, setPrompt] = useState("");
   const [loading, setLoadingState] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
@@ -92,7 +95,7 @@ export default function GenerateForm({
           </label>
           <textarea
             value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
+            onChange={(e) => onPromptChange(e.target.value)}
             placeholder="Describe the image you want to generate..."
             rows={3}
             className="w-full px-3 py-2 bg-surface border border-border rounded-lg text-sm text-foreground placeholder:text-muted focus:outline-none focus:border-accent transition-colors resize-none"
