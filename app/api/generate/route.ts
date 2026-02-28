@@ -69,8 +69,6 @@ export async function POST(request: NextRequest) {
     messages.push({ role: "user" as const, content: prompt });
   }
 
-  console.log("Generate request:", JSON.stringify({ model, messages, aspectRatio, resolution }, null, 2));
-
   try {
     const client = createClient(apiKey);
 
@@ -124,7 +122,6 @@ export async function POST(request: NextRequest) {
     }
 
     if (!imageUrl) {
-      console.error("Could not extract image. Raw message:", JSON.stringify(message, null, 2));
       return NextResponse.json({
         error: "Could not extract image from response",
         raw: message,
@@ -133,7 +130,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ imageUrl, model: result.model });
   } catch (err) {
-    console.error("Generate error:", err);
     return NextResponse.json(
       {
         error: err instanceof Error ? err.message : "Failed to generate image",

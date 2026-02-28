@@ -79,7 +79,6 @@ Return ONLY valid JSON, no markdown fences.`;
 
     return NextResponse.json(brandData);
   } catch (err) {
-    console.error("Moodboard error:", err);
     return NextResponse.json(
       {
         error:

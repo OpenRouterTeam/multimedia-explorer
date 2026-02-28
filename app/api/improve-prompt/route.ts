@@ -42,7 +42,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ prompt: content.trim() });
   } catch (err) {
-    console.error("Improve prompt error:", err);
     return NextResponse.json(
       {
         error:
