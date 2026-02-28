@@ -175,7 +175,7 @@ export default function Moodboard({
           </div>
 
           {/* System prompt */}
-          <div>
+          <div className="p-3 border border-border rounded-lg">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-xs font-medium text-muted uppercase tracking-wider">
                 Generated System Prompt

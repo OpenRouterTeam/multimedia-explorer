@@ -5,14 +5,13 @@ import type { BrandData } from "./moodboard";
 import type { ReferenceImage } from "@/lib/types";
 import AuthPrompt from "./auth-prompt";
 
-const ASPECT_RATIOS = ["1:1", "16:9", "9:16", "4:3", "3:2"];
-const RESOLUTIONS = ["1K", "2K"];
-
 export default function GenerateForm({
   apiKey,
   brandData,
   model,
   referenceImages,
+  aspectRatio,
+  resolution,
   onResult,
   onLoading,
   onAuthNeeded,
@@ -21,13 +20,13 @@ export default function GenerateForm({
   brandData: BrandData | null;
   model: string;
   referenceImages: ReferenceImage[];
+  aspectRatio: string;
+  resolution: string;
   onResult: (result: { imageUrl: string; model: string } | null) => void;
   onLoading: (loading: boolean) => void;
   onAuthNeeded: (key: string) => void;
 }) {
   const [prompt, setPrompt] = useState("");
-  const [aspectRatio, setAspectRatio] = useState("1:1");
-  const [resolution, setResolution] = useState("1K");
   const [loading, setLoadingState] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
@@ -98,53 +97,6 @@ export default function GenerateForm({
             rows={3}
             className="w-full px-3 py-2 bg-surface border border-border rounded-lg text-sm text-foreground placeholder:text-muted focus:outline-none focus:border-accent transition-colors resize-none"
           />
-        </div>
-
-        {/* Aspect ratio and resolution */}
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <label className="block text-xs font-medium text-muted uppercase tracking-wider mb-1.5">
-              Aspect Ratio
-            </label>
-            <div className="flex gap-1.5 flex-wrap">
-              {ASPECT_RATIOS.map((ratio) => (
-                <button
-                  key={ratio}
-                  type="button"
-                  onClick={() => setAspectRatio(ratio)}
-                  className={`px-2.5 py-1 text-xs rounded-md border transition-colors cursor-pointer ${
-                    aspectRatio === ratio
-                      ? "bg-accent text-white border-accent"
-                      : "bg-surface border-border text-muted hover:text-foreground hover:border-accent/50"
-                  }`}
-                >
-                  {ratio}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-medium text-muted uppercase tracking-wider mb-1.5">
-              Resolution
-            </label>
-            <div className="flex gap-1.5">
-              {RESOLUTIONS.map((res) => (
-                <button
-                  key={res}
-                  type="button"
-                  onClick={() => setResolution(res)}
-                  className={`px-2.5 py-1 text-xs rounded-md border transition-colors cursor-pointer ${
-                    resolution === res
-                      ? "bg-accent text-white border-accent"
-                      : "bg-surface border-border text-muted hover:text-foreground hover:border-accent/50"
-                  }`}
-                >
-                  {res}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
 
         {error && <p className="text-sm text-red-400">{error}</p>}

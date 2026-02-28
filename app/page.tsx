@@ -13,6 +13,8 @@ export default function Home() {
   const [brandData, setBrandData] = useState<BrandData | null>(null);
   const [model, setModel] = useState(MODELS[0].id);
   const [referenceImages, setReferenceImages] = useState<ReferenceImage[]>([]);
+  const [aspectRatio, setAspectRatio] = useState("1:1");
+  const [resolution, setResolution] = useState("1K");
   const [imageResult, setImageResult] = useState<{
     imageUrl: string;
     model: string;
@@ -111,6 +113,10 @@ export default function Home() {
             onModelChange={setModel}
             referenceImages={referenceImages}
             onReferenceImagesChange={setReferenceImages}
+            aspectRatio={aspectRatio}
+            onAspectRatioChange={setAspectRatio}
+            resolution={resolution}
+            onResolutionChange={setResolution}
           />
 
           {/* Generate section */}
@@ -120,6 +126,8 @@ export default function Home() {
               brandData={brandData}
               model={model}
               referenceImages={referenceImages}
+              aspectRatio={aspectRatio}
+              resolution={resolution}
               onResult={setImageResult}
               onLoading={setGenerating}
               onAuthNeeded={handleLogin}

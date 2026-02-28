@@ -7,6 +7,7 @@ import Moodboard from "./moodboard";
 import { MoodCardHeader, MoodCardBody } from "./cards/mood-card";
 import { ModelCardHeader, ModelCardBody } from "./cards/model-card";
 import { ReferencesCardHeader, ReferencesCardBody } from "./cards/references-card";
+import { OutputCardHeader, OutputCardBody } from "./cards/output-card";
 
 export default function AccordionCards({
   apiKey,
@@ -17,6 +18,10 @@ export default function AccordionCards({
   onModelChange,
   referenceImages,
   onReferenceImagesChange,
+  aspectRatio,
+  onAspectRatioChange,
+  resolution,
+  onResolutionChange,
 }: {
   apiKey: string | null;
   brandData: BrandData | null;
@@ -26,6 +31,10 @@ export default function AccordionCards({
   onModelChange: (model: string) => void;
   referenceImages: ReferenceImage[];
   onReferenceImagesChange: (images: ReferenceImage[]) => void;
+  aspectRatio: string;
+  onAspectRatioChange: (ratio: string) => void;
+  resolution: string;
+  onResolutionChange: (res: string) => void;
 }) {
   const [expandedCard, setExpandedCard] = useState<CardId | null>(null);
 
@@ -37,12 +46,13 @@ export default function AccordionCards({
     { id: "mood", header: <MoodCardHeader brandData={brandData} /> },
     { id: "model", header: <ModelCardHeader model={model} /> },
     { id: "inputImages", header: <ReferencesCardHeader images={referenceImages} /> },
+    { id: "output", header: <OutputCardHeader aspectRatio={aspectRatio} resolution={resolution} /> },
   ];
 
   return (
     <div className="space-y-0">
       {/* Card headers row */}
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-4 gap-2">
         {cards.map((card) => (
           <button
             key={card.id}
@@ -79,6 +89,14 @@ export default function AccordionCards({
             <ReferencesCardBody
               images={referenceImages}
               onImagesChange={onReferenceImagesChange}
+            />
+          )}
+          {expandedCard === "output" && (
+            <OutputCardBody
+              aspectRatio={aspectRatio}
+              onAspectRatioChange={onAspectRatioChange}
+              resolution={resolution}
+              onResolutionChange={onResolutionChange}
             />
           )}
         </div>
