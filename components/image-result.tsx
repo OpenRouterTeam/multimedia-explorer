@@ -14,8 +14,8 @@ export default function ImageResult({
   const [added, setAdded] = useState(false);
 
   useEffect(() => {
-    if (loading) setAdded(false);
-  }, [loading]);
+    setAdded(false);
+  }, [loading, result]);
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-16 space-y-4">
@@ -46,16 +46,11 @@ export default function ImageResult({
           <span className="text-xs text-muted">{result.model}</span>
           {onAddAsInputImage && (
             <button
-              disabled={added}
               onClick={() => {
                 onAddAsInputImage(result.imageUrl);
                 setAdded(true);
               }}
-              className={`px-3 py-1.5 text-xs font-medium border rounded-lg transition-colors ${
-                added
-                  ? "border-border text-muted cursor-default"
-                  : "border-border hover:border-accent hover:text-accent cursor-pointer"
-              }`}
+              className="px-3 py-1.5 text-xs font-medium border border-border rounded-lg hover:border-accent hover:text-accent transition-colors cursor-pointer"
             >
               {added ? "Added as Input" : "Add as Input Image"}
             </button>
