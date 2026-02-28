@@ -58,10 +58,12 @@ export default function AccordionCards({
       {/* Card headers row */}
       <div className="grid grid-cols-4 gap-2">
         {cards.map((card) => (
-          <button
+          <div
             key={card.id}
-            type="button"
+            role="button"
+            tabIndex={0}
             onClick={() => toggle(card.id)}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") toggle(card.id); }}
             className={`px-3 py-2.5 rounded-lg border text-left transition-colors cursor-pointer ${
               expandedCard === card.id
                 ? "bg-surface border-accent/50"
@@ -69,7 +71,7 @@ export default function AccordionCards({
             }`}
           >
             {card.header}
-          </button>
+          </div>
         ))}
       </div>
 

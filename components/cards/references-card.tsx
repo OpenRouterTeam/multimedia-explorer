@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import type { ReferenceImage } from "@/lib/types";
 
 export function ReferencesCardHeader({ images }: { images: ReferenceImage[] }) {
@@ -22,7 +22,9 @@ export function ReferencesCardBody({
   onImagesChange: (images: ReferenceImage[]) => void;
 }) {
   const [urlInput, setUrlInput] = useState("");
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const dragCounterRef = useRef(0);
 
   function addImage(img: ReferenceImage) {
     onImagesChange([...images, img]);
@@ -35,6 +37,7 @@ export function ReferencesCardBody({
   function handleFiles(files: FileList | null) {
     if (!files) return;
     Array.from(files).forEach((file) => {
+      if (!file.type.startsWith("image/")) return;
       const reader = new FileReader();
       reader.onload = () => {
         addImage({
@@ -58,6 +61,41 @@ export function ReferencesCardBody({
     setUrlInput("");
   }
 
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounterRef.current++;
+    if (e.dataTransfer.types.includes("Files")) {
+      setIsDragging(true);
+    }
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounterRef.current--;
+    if (dragCounterRef.current === 0) {
+      setIsDragging(false);
+    }
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dragCounterRef.current = 0;
+      setIsDragging(false);
+      handleFiles(e.dataTransfer.files);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [images]
+  );
+
   return (
     <div className="space-y-3">
       {/* Thumbnail grid */}
@@ -68,7 +106,7 @@ export function ReferencesCardBody({
               <img
                 src={img.url}
                 alt={img.name}
-                className="w-16 h-16 object-cover rounded-md border border-border"
+                className="w-32 h-32 object-cover rounded-md border border-border"
               />
               <button
                 onClick={() => removeImage(img.id)}
@@ -81,24 +119,56 @@ export function ReferencesCardBody({
         </div>
       )}
 
-      {/* Upload + URL inputs */}
-      <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          className="px-3 py-1.5 text-xs font-medium bg-surface border border-border rounded-lg hover:border-accent/50 transition-colors cursor-pointer"
+      {/* Upload drop zone */}
+      <button
+        type="button"
+        onClick={() => fileInputRef.current?.click()}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+        className={`w-full flex flex-col items-center justify-center gap-1.5 py-6 rounded-lg border-2 border-dashed transition-colors cursor-pointer ${
+          isDragging
+            ? "border-accent bg-accent/10"
+            : "border-border hover:border-accent/50 bg-surface"
+        }`}
+      >
+        <svg
+          className={`w-6 h-6 ${isDragging ? "text-accent" : "text-muted"}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={1.5}
         >
-          Upload
-        </button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/png,image/jpeg,image/webp,image/gif"
-          multiple
-          className="hidden"
-          onChange={(e) => handleFiles(e.target.files)}
-        />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+          />
+        </svg>
+        <span className="text-xs font-medium text-foreground">
+          {isDragging ? "Drop images here" : "Click to upload or drag & drop"}
+        </span>
+        <span className="text-[10px] text-muted">PNG, JPG, WebP, GIF</span>
+      </button>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/png,image/jpeg,image/webp,image/gif"
+        multiple
+        className="hidden"
+        onChange={(e) => handleFiles(e.target.files)}
+      />
 
+      {/* Divider */}
+      <div className="flex items-center gap-3">
+        <div className="flex-1 h-px bg-border" />
+        <span className="text-[10px] uppercase tracking-wider text-muted font-medium">or</span>
+        <div className="flex-1 h-px bg-border" />
+      </div>
+
+      {/* URL input */}
+      <div className="flex gap-2">
         <input
           type="url"
           value={urlInput}
