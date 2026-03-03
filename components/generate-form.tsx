@@ -17,7 +17,6 @@ export default function GenerateForm({
   onPromptChange,
   onResult,
   onLoading,
-  onAuthNeeded,
 }: {
   apiKey: string | null;
   brandData: BrandData | null;
@@ -29,7 +28,6 @@ export default function GenerateForm({
   onPromptChange: (prompt: string) => void;
   onResult: (result: { imageUrl: string; model: string } | null) => void;
   onLoading: (loading: boolean) => void;
-  onAuthNeeded: (key: string) => void;
 }) {
   const [loading, setLoadingState] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -166,7 +164,7 @@ export default function GenerateForm({
             <select
               value={improveModel}
               onChange={(e) => setImproveModel(e.target.value)}
-              className="px-2 py-1.5 bg-surface border border-border rounded-lg text-xs text-foreground focus:outline-none focus:border-accent transition-colors cursor-pointer"
+              className="px-2 py-1.5 bg-surface border border-border rounded-lg text-xs font-medium text-foreground focus:outline-none focus:border-accent transition-colors cursor-pointer"
             >
               {MOOD_MODELS.map((m) => (
                 <option key={m.id} value={m.id}>
@@ -225,7 +223,7 @@ export default function GenerateForm({
 
         {error && <p className="text-sm text-red-400">{error}</p>}
 
-        {showAuthPrompt && <AuthPrompt onAuthNeeded={onAuthNeeded} onDismiss={() => setShowAuthPrompt(false)} />}
+        {showAuthPrompt && <AuthPrompt onDismiss={() => setShowAuthPrompt(false)} />}
       </form>
     </div>
   );

@@ -1,14 +1,33 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import AuthButton from "@/components/auth-button";
+import { SignInButton } from "@/components/auth-button";
+import {
+  getApiKey,
+  setApiKey,
+  clearApiKey,
+  onAuthChange,
+  hasOAuthCallbackPending,
+  handleOAuthCallback,
+} from "@/lib/openrouter-auth";
 import type { BrandData } from "@/components/moodboard";
 import AccordionCards from "@/components/accordion-cards";
 import GenerateForm from "@/components/generate-form";
 import ImageResult from "@/components/image-result";
 import HistoryTimeline from "@/components/history-timeline";
-import { MODELS, MOOD_MODELS, EXTENDED_ASPECT_RATIOS, type ReferenceImage, type HistoryEntry } from "@/lib/types";
-import { saveImage, loadImage, deleteImages, clearAllImages } from "@/lib/history-db";
+import {
+  MODELS,
+  MOOD_MODELS,
+  EXTENDED_ASPECT_RATIOS,
+  type ReferenceImage,
+  type HistoryEntry,
+} from "@/lib/types";
+import {
+  saveImage,
+  loadImage,
+  deleteImages,
+  clearAllImages,
+} from "@/lib/history-db";
 
 const HISTORY_KEY = "generation_history";
 const MAX_HISTORY = 50;
@@ -21,7 +40,7 @@ function stripDataUrls(images: ReferenceImage[]): ReferenceImage[] {
 }
 
 export default function Home() {
-  const [apiKey, setApiKey] = useState<string | null>(null);
+  const [apiKey, setApiKeyState] = useState<string | null>(null);
   const [brandData, setBrandData] = useState<BrandData | null>(null);
   const [moodModel, setMoodModel] = useState(MOOD_MODELS[0].id);
   const [model, setModel] = useState(MODELS[0].id);
@@ -36,6 +55,7 @@ export default function Home() {
   const [generating, setGenerating] = useState(false);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showWhatIsThis, setShowWhatIsThis] = useState(false);
 
   // Snapshot of "current" working state to return to after browsing history
   const [activeHistoryId, setActiveHistoryId] = useState<string | null>(null);
@@ -50,12 +70,39 @@ export default function Home() {
   } | null>(null);
 
   useEffect(() => {
+    // Handle OAuth callback inline (check ?code= on mount)
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    if (code && hasOAuthCallbackPending()) {
+      handleOAuthCallback(code)
+        .catch((err) => console.error("OAuth callback failed:", err))
+        .finally(() => {
+          // Clean URL
+          window.history.replaceState({}, "", window.location.pathname);
+        });
+    }
+
+    // Init API key from env or storage
     const envKey = process.env.NEXT_PUBLIC_OPENROUTER_API_KEY;
     if (envKey) {
-      setApiKey(envKey);
+      setApiKeyState(envKey);
     } else {
-      const storedKey = localStorage.getItem("openrouter_api_key");
-      if (storedKey) setApiKey(storedKey);
+      const storedKey = getApiKey();
+      if (storedKey) setApiKeyState(storedKey);
+    }
+
+    // Subscribe to auth changes (including multi-tab sync)
+    const unsubscribe = onAuthChange(() => {
+      const key = getApiKey();
+      setApiKeyState(key);
+      if (!key) {
+        setBrandData(null);
+        setImageResult(null);
+      }
+    });
+
+    if (!localStorage.getItem("has_seen_intro")) {
+      setShowWhatIsThis(true);
     }
 
     const storedMoodModel = localStorage.getItem("mood_model");
@@ -85,28 +132,29 @@ export default function Home() {
         });
       } catch {}
     }
+
+    return unsubscribe;
   }, []);
+
+  function dismissIntro() {
+    setShowWhatIsThis(false);
+    localStorage.setItem("has_seen_intro", "1");
+  }
 
   function persistHistory(entries: HistoryEntry[]) {
     setHistory(entries);
     // Strip imageUrl before saving to localStorage (images live in IndexedDB)
-    const toStore = entries.map(({ imageUrl: _img, referenceImages: refs, ...rest }) => ({
-      ...rest,
-      referenceImages: stripDataUrls(refs),
-    }));
+    const toStore = entries.map(
+      ({ imageUrl: _img, referenceImages: refs, ...rest }) => ({
+        ...rest,
+        referenceImages: stripDataUrls(refs),
+      }),
+    );
     localStorage.setItem(HISTORY_KEY, JSON.stringify(toStore));
   }
 
-  function handleLogin(key: string) {
-    localStorage.setItem("openrouter_api_key", key);
-    setApiKey(key);
-  }
-
   function handleLogout() {
-    localStorage.removeItem("openrouter_api_key");
-    setApiKey(null);
-    setBrandData(null);
-    setImageResult(null);
+    clearApiKey();
   }
 
   function handleMoodModelChange(m: string) {
@@ -131,8 +179,10 @@ export default function Home() {
   }
 
   function handleDeleteAllData() {
-    // Clear localStorage
-    localStorage.removeItem("openrouter_api_key");
+    // Clear auth via module (notifies listeners / other tabs)
+    clearApiKey();
+
+    // Clear other localStorage
     localStorage.removeItem("moodboard_data");
     localStorage.removeItem("mood_model");
     localStorage.removeItem(HISTORY_KEY);
@@ -141,7 +191,7 @@ export default function Home() {
     clearAllImages().catch(console.error);
 
     // Reset all state
-    setApiKey(null);
+    setApiKeyState(null);
     setBrandData(null);
     setMoodModel(MOOD_MODELS[0].id);
     setModel(MODELS[0].id);
@@ -265,15 +315,38 @@ export default function Home() {
               <h1 className="text-lg font-heading font-semibold">
                 Media Playground
               </h1>
-              <p className="text-[10px] text-muted leading-tight">Powered by <a href="https://openrouter.ai" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">OpenRouter</a></p>
+              <p className="text-[10px] text-muted leading-tight">
+                Powered by{" "}
+                <a
+                  href="https://openrouter.ai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-foreground transition-colors"
+                >
+                  OpenRouter
+                </a>
+              </p>
             </div>
           </div>
 
-          <AuthButton
-            apiKey={apiKey}
-            onLogin={handleLogin}
-            onLogout={handleLogout}
-          />
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowWhatIsThis(true)}
+              className="text-xs text-muted hover:text-foreground transition-colors cursor-pointer underline underline-offset-2"
+            >
+              What is this?
+            </button>
+            {apiKey ? (
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 text-sm rounded-lg border border-neutral-700 text-neutral-300 hover:text-white hover:border-neutral-500 transition-colors cursor-pointer"
+              >
+                Sign out
+              </button>
+            ) : (
+              <SignInButton variant="default" size="sm" />
+            )}
+          </div>
         </div>
       </header>
 
@@ -292,17 +365,11 @@ export default function Home() {
         {/* Page content */}
         <main className="flex-1 min-w-0">
           <div className="space-y-8">
-            {/* Intro text */}
-            <p className="text-sm text-muted text-center">
-              Use different LLMs and Media Models together to generate images
-            </p>
-
             {/* Accordion cards */}
             <AccordionCards
               apiKey={apiKey}
               brandData={brandData}
               onBrandData={handleBrandData}
-              onAuthNeeded={handleLogin}
               moodModel={moodModel}
               onMoodModelChange={handleMoodModelChange}
               model={model}
@@ -328,7 +395,6 @@ export default function Home() {
                 onPromptChange={setPrompt}
                 onResult={handleResult}
                 onLoading={setGenerating}
-                onAuthNeeded={handleLogin}
               />
             </section>
 
@@ -358,24 +424,22 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-border mt-auto">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between text-xs text-muted">
-          <span className="flex items-center gap-3">
-            <a
-              href="https://openrouter.ai/docs/sdks"
-              className="hover:text-foreground transition-colors"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Built with the OpenRouter SDK
-            </a>
-            <a
-              href="https://github.com/OpenRouterTeam/media-playground"
-              className="hover:text-foreground transition-colors"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Fork on GitHub
-            </a>
-          </span>
+          <a
+            href="https://openrouter.ai/docs/sdks"
+            className="hover:text-foreground transition-colors"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Built with the OpenRouter SDK
+          </a>
+          <a
+            href="https://github.com/OpenRouterTeam/media-playground"
+            className="hover:text-foreground transition-colors"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Fork on GitHub
+          </a>
           <span>
             All data is stored on your machine.{" "}
             <button
@@ -392,9 +456,12 @@ export default function Home() {
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-surface border border-border rounded-xl p-6 max-w-sm mx-4 space-y-4">
-            <h3 className="text-sm font-heading font-semibold">Delete all data?</h3>
+            <h3 className="text-sm font-heading font-semibold">
+              Delete all data?
+            </h3>
             <p className="text-xs text-muted">
-              This will permanently delete all your settings, API key, moodboard data, and generation history. This cannot be undone.
+              This will permanently delete all your settings, API key, moodboard
+              data, and generation history. This cannot be undone.
             </p>
             <div className="flex gap-2 justify-end">
               <button
@@ -408,6 +475,95 @@ export default function Home() {
                 className="px-3 py-1.5 text-xs font-medium bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors cursor-pointer"
               >
                 Delete Everything
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* What is this? modal */}
+      {showWhatIsThis && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          onClick={() => dismissIntro()}
+        >
+          <div
+            className="bg-surface border border-border rounded-xl p-8 max-w-lg mx-4 space-y-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between">
+              <h2 className="text-lg font-heading font-semibold">
+                Welcome to Media Playground
+              </h2>
+              <button
+                onClick={() => dismissIntro()}
+                className="text-muted hover:text-foreground transition-colors cursor-pointer -mt-1"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            <p className="text-sm text-muted leading-relaxed">
+              <a
+                href="https://openrouter.ai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-accent hover:text-accent-hover transition-colors"
+              >
+                OpenRouter
+              </a>{" "}
+              lets you to access text, image, and video generating models from a
+              single API. This makes it easy to use many models together to
+              generate media. Let's try it!
+            </p>
+
+            <div className="space-y-3">
+              <h3 className="text-sm font-heading font-semibold">
+                Get started
+              </h3>
+              <ol className="space-y-3 text-sm text-muted leading-relaxed list-decimal list-inside">
+                <li>
+                  Choose{" "}
+                  <span className="text-foreground font-medium">
+                    Nano Banana 2
+                  </span>{" "}
+                  as your model.
+                </li>
+                <li>
+                  Click{" "}
+                  <span className="text-foreground font-medium">Set Mood</span>{" "}
+                  and enter your company URL to pull in your brand colors and
+                  style.
+                </li>
+                <li>Type a prompt to generate a superhero for your brand.</li>
+                <li>
+                  Click the button to add the image as an input. Then put your
+                  superhero somewhere else. Perhaps on the moon?
+                </li>
+                <li>
+                  Hover over the dots on the left to view your past generations.
+                </li>
+              </ol>
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                onClick={() => dismissIntro()}
+                className="px-4 py-2 text-sm font-medium bg-accent hover:bg-accent-hover text-white rounded-lg transition-colors cursor-pointer"
+              >
+                Got it
               </button>
             </div>
           </div>

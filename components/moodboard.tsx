@@ -33,14 +33,12 @@ export default function Moodboard({
   apiKey,
   brandData,
   onBrandData,
-  onAuthNeeded,
   moodModel,
   onMoodModelChange,
 }: {
   apiKey: string | null;
   brandData: BrandData | null;
   onBrandData: (data: BrandData | null) => void;
-  onAuthNeeded: (key: string) => void;
   moodModel: string;
   onMoodModelChange: (model: string) => void;
 }) {
@@ -194,7 +192,7 @@ export default function Moodboard({
             <p className="text-sm text-red-400">{error}</p>
           )}
 
-          {showAuthPrompt && <AuthPrompt onAuthNeeded={onAuthNeeded} onDismiss={() => setShowAuthPrompt(false)} />}
+          {showAuthPrompt && <AuthPrompt onDismiss={() => setShowAuthPrompt(false)} />}
         </>
       )}
 

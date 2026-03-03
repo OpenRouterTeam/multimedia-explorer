@@ -5,7 +5,7 @@ import type { CardId, ReferenceImage } from "@/lib/types";
 import type { BrandData } from "./moodboard";
 import Moodboard from "./moodboard";
 import { MoodCardHeader, MoodCardBody } from "./cards/mood-card";
-import { ModelCardHeader, ModelCardBody } from "./cards/model-card";
+import { ModelCardBody } from "./cards/model-card";
 import { ReferencesCardHeader, ReferencesCardBody } from "./cards/references-card";
 import { OutputCardHeader, OutputCardBody } from "./cards/output-card";
 
@@ -13,7 +13,6 @@ export default function AccordionCards({
   apiKey,
   brandData,
   onBrandData,
-  onAuthNeeded,
   moodModel,
   onMoodModelChange,
   model,
@@ -28,7 +27,6 @@ export default function AccordionCards({
   apiKey: string | null;
   brandData: BrandData | null;
   onBrandData: (data: BrandData | null) => void;
-  onAuthNeeded: (key: string) => void;
   moodModel: string;
   onMoodModelChange: (model: string) => void;
   model: string;
@@ -48,15 +46,19 @@ export default function AccordionCards({
 
   const cards: { id: CardId; header: React.ReactNode }[] = [
     { id: "mood", header: <MoodCardHeader brandData={brandData} /> },
-    { id: "model", header: <ModelCardHeader model={model} /> },
     { id: "inputImages", header: <ReferencesCardHeader images={referenceImages} /> },
     { id: "output", header: <OutputCardHeader aspectRatio={aspectRatio} resolution={resolution} /> },
   ];
 
   return (
-    <div className="space-y-0">
-      {/* Card headers row */}
-      <div className="grid grid-cols-4 gap-2">
+    <div className="space-y-2">
+      {/* Model card — full width, always visible */}
+      <div className="px-4 py-4 bg-surface/50 border border-border rounded-lg">
+        <ModelCardBody model={model} onModelChange={onModelChange} />
+      </div>
+
+      {/* Remaining card headers row */}
+      <div className="grid grid-cols-3 gap-2">
         {cards.map((card) => (
           <div
             key={card.id}
@@ -75,23 +77,19 @@ export default function AccordionCards({
         ))}
       </div>
 
-      {/* Expanded body */}
-      {expandedCard && (
-        <div className="mt-2 pt-4 px-4 pb-2 bg-surface/50 border border-border rounded-lg">
+      {/* Expanded body for non-model cards */}
+      {expandedCard && expandedCard !== "model" && (
+        <div className="pt-4 px-4 pb-2 bg-surface/50 border border-border rounded-lg">
           {expandedCard === "mood" && (
             <MoodCardBody>
               <Moodboard
                 apiKey={apiKey}
                 brandData={brandData}
                 onBrandData={onBrandData}
-                onAuthNeeded={onAuthNeeded}
                 moodModel={moodModel}
                 onMoodModelChange={onMoodModelChange}
               />
             </MoodCardBody>
-          )}
-          {expandedCard === "model" && (
-            <ModelCardBody model={model} onModelChange={onModelChange} />
           )}
           {expandedCard === "inputImages" && (
             <ReferencesCardBody

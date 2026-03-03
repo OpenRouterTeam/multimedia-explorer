@@ -1,34 +1,20 @@
 "use client";
 
-import { generateCodeVerifier, generateCodeChallenge } from "@/lib/oauth";
+import { initiateOAuth, setApiKey } from "@/lib/openrouter-auth";
 
 export default function AuthPrompt({
-  onAuthNeeded,
   onDismiss,
 }: {
-  onAuthNeeded: (key: string) => void;
   onDismiss: () => void;
 }) {
   async function handleOAuth() {
-    const verifier = generateCodeVerifier();
-    sessionStorage.setItem("code_verifier", verifier);
-
-    const challenge = await generateCodeChallenge(verifier);
-    const callbackUrl = `${window.location.origin}/callback`;
-
-    const params = new URLSearchParams({
-      callback_url: callbackUrl,
-      code_challenge: challenge,
-      code_challenge_method: "S256",
-    });
-
-    window.location.href = `https://openrouter.ai/auth?${params.toString()}`;
+    await initiateOAuth();
   }
 
   function handlePasteKey() {
     const key = prompt("Paste your OpenRouter API key:");
     if (key?.trim()) {
-      onAuthNeeded(key.trim());
+      setApiKey(key.trim());
       onDismiss();
     }
   }

@@ -16,6 +16,12 @@ export const MODELS = [
   { id: "sourceful/riverflow-v2-fast-preview", label: "Riverflow V2 Fast Preview" },
 ];
 
+export const VIDEO_MODELS = [
+  { id: "google/veo-3.1", label: "Veo 3.1" },
+  { id: "openai/sora-2", label: "Sora 2" },
+  { id: "bytedance/seedance-1.5-pro", label: "Seedance 1.5 Pro" },
+];
+
 export const MOOD_MODELS = [
   { id: "google/gemini-2.5-flash", label: "Gemini 2.5 Flash" },
   { id: "openai/gpt-5.2-pro", label: "GPT-5.2 Pro" },
