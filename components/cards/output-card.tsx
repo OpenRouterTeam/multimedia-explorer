@@ -7,6 +7,7 @@ import {
   VIDEO_ASPECT_RATIOS,
   VIDEO_RESOLUTIONS,
   VIDEO_DURATIONS,
+  NO_480P_MODELS,
 } from "@/lib/types";
 
 const GEMINI_FLASH_MODEL = "google/gemini-3.1-flash-image-preview";
@@ -63,7 +64,11 @@ export function OutputCardBody({
     : showExtended
       ? [...ASPECT_RATIOS, ...EXTENDED_ASPECT_RATIOS]
       : ASPECT_RATIOS;
-  const resolutions = isVideoModel ? VIDEO_RESOLUTIONS : RESOLUTIONS;
+  const resolutions = isVideoModel
+    ? NO_480P_MODELS.includes(model)
+      ? VIDEO_RESOLUTIONS.filter((r) => r !== "480p")
+      : VIDEO_RESOLUTIONS
+    : RESOLUTIONS;
   const showAudioToggle = isVideoModel && model === VEO_MODEL;
 
   return (
