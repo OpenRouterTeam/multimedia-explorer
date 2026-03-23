@@ -11,6 +11,8 @@ import HistoryTimeline from "@/components/history-timeline";
 import {
   MOOD_MODELS,
   EXTENDED_ASPECT_RATIOS,
+  VIDEO_DURATIONS,
+  MODEL_DURATIONS,
   type ReferenceImage,
   type HistoryEntry,
   type MediaResult,
@@ -168,11 +170,19 @@ export default function Home() {
       if (willBeVideo) {
         setAspectRatio("16:9");
         setResolution("1080p");
+        const durations = MODEL_DURATIONS[newModel] ?? VIDEO_DURATIONS;
+        setDuration(durations[0]);
       } else {
         setAspectRatio("1:1");
         setResolution("1K");
       }
       resetVideo();
+    } else if (willBeVideo) {
+      // Switching between video models — reset duration if current is invalid
+      const durations = MODEL_DURATIONS[newModel] ?? VIDEO_DURATIONS;
+      if (!durations.includes(duration)) {
+        setDuration(durations[0]);
+      }
     }
 
     if (!willBeVideo && EXTENDED_ASPECT_RATIOS.includes(aspectRatio)) {

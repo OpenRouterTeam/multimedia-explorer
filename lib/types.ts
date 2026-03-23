@@ -30,6 +30,11 @@ export const VIDEO_RESOLUTIONS = ["480p", "720p", "1080p"];
 export const NO_480P_MODELS = ["google/veo-3.1"];
 export const VIDEO_DURATIONS = [5, 10, 15];
 
+/** Model-specific duration overrides */
+export const MODEL_DURATIONS: Record<string, number[]> = {
+  "google/veo-3.1": [4, 6, 8],
+};
+
 export type MediaResult =
   | { type: "image"; imageUrl: string; model: string }
   | { type: "video"; videoUrl: string; model: string };
