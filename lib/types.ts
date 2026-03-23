@@ -24,7 +24,7 @@ export const EXTENDED_ASPECT_RATIOS = ["1:4", "4:1", "1:8", "8:1"];
 export const RESOLUTIONS = ["1K", "2K", "4K"];
 
 export const VIDEO_ASPECT_RATIOS = ["16:9", "9:16", "1:1"];
-export const VIDEO_RESOLUTIONS = ["480p", "720p", "1080p"];
+export const VIDEO_RESOLUTIONS = ["720p", "1080p"];
 export const VIDEO_DURATIONS = [5, 10, 15];
 
 export type MediaResult =
