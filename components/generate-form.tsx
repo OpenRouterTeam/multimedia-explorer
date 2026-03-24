@@ -267,16 +267,36 @@ export default function GenerateForm({
           </button>
         </div>
 
-        {error && (
-          <div className="flex items-start gap-2 px-3 py-2.5 bg-red-500/10 border border-red-500/20 rounded-lg">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-400 shrink-0 mt-0.5">
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="12" />
-              <line x1="12" y1="16" x2="12.01" y2="16" />
-            </svg>
-            <p className="text-sm text-red-400">{error}</p>
-          </div>
-        )}
+        {error && (() => {
+          const isCredit = /insufficient.*credits|out of credits|not enough credits|credits.*required|payment required/i.test(error);
+          return isCredit ? (
+            <div className="flex items-center gap-2 px-3 py-2.5 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-yellow-400 shrink-0">
+                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+              <p className="text-sm text-yellow-400 flex-1">{error}</p>
+              <a
+                href="https://openrouter.ai/settings/credits"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 px-3 py-1 text-xs font-medium bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-300 rounded-md transition-colors"
+              >
+                Add credits
+              </a>
+            </div>
+          ) : (
+            <div className="flex items-start gap-2 px-3 py-2.5 bg-red-500/10 border border-red-500/20 rounded-lg">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-400 shrink-0 mt-0.5">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              <p className="text-sm text-red-400">{error}</p>
+            </div>
+          );
+        })()}
 
         {showAuthPrompt && <AuthPrompt onDismiss={() => setShowAuthPrompt(false)} />}
       </form>

@@ -1,35 +1,29 @@
 "use client";
 
-import { useOpenRouterAuth } from "@/hooks/use-openrouter-auth";
+import { SignInButton } from "./auth-button";
 
 export default function AuthPrompt({
   onDismiss,
 }: {
   onDismiss: () => void;
 }) {
-  const { signIn } = useOpenRouterAuth();
-
   return (
-    <div className="p-4 bg-accent/5 border border-accent/20 rounded-lg space-y-3">
-      <p className="text-sm text-foreground">
+    <div className="relative p-4 bg-accent/5 border border-accent/20 rounded-lg space-y-3">
+      <button
+        type="button"
+        onClick={onDismiss}
+        className="absolute top-2 right-2 p-1 text-muted hover:text-foreground transition-colors cursor-pointer"
+        aria-label="Dismiss"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <p className="text-sm text-foreground pr-6">
         You need an OpenRouter API key to continue.
       </p>
-      <div className="flex gap-2 flex-wrap">
-        <button
-          type="button"
-          onClick={() => signIn()}
-          className="px-4 py-2 text-sm font-medium bg-accent hover:bg-accent-hover text-white rounded-lg transition-colors cursor-pointer"
-        >
-          Sign in with OpenRouter
-        </button>
-        <button
-          type="button"
-          onClick={onDismiss}
-          className="px-4 py-2 text-sm text-muted hover:text-foreground transition-colors cursor-pointer"
-        >
-          Cancel
-        </button>
-      </div>
+      <SignInButton variant="default" size="sm" />
     </div>
   );
 }

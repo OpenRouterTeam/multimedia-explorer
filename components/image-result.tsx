@@ -81,9 +81,24 @@ export default function ImageResult({
   }
 
   if (videoStatus === "failed" && videoError) {
+    const isCredit = /insufficient.*credits|out of credits|not enough credits|credits.*required|payment required/i.test(videoError);
     return (
       <div className="flex flex-col items-center justify-center py-16 space-y-4">
-        <p className="text-sm text-red-400">{videoError}</p>
+        {isCredit ? (
+          <>
+            <p className="text-sm text-yellow-400">{videoError}</p>
+            <a
+              href="https://openrouter.ai/settings/credits"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 text-sm font-medium bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-300 rounded-lg transition-colors"
+            >
+              Add credits
+            </a>
+          </>
+        ) : (
+          <p className="text-sm text-red-400">{videoError}</p>
+        )}
       </div>
     );
   }

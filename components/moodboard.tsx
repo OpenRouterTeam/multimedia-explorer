@@ -188,9 +188,24 @@ export default function Moodboard({
             </div>
           </form>
 
-          {error && (
-            <p className="text-sm text-red-400">{error}</p>
-          )}
+          {error && (() => {
+            const isCredit = /insufficient.*credits|out of credits|not enough credits|credits.*required|payment required/i.test(error);
+            return isCredit ? (
+              <div className="flex items-center gap-2">
+                <p className="text-sm text-yellow-400">{error}</p>
+                <a
+                  href="https://openrouter.ai/settings/credits"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="shrink-0 px-3 py-1 text-xs font-medium bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-300 rounded-md transition-colors"
+                >
+                  Add credits
+                </a>
+              </div>
+            ) : (
+              <p className="text-sm text-red-400">{error}</p>
+            );
+          })()}
 
           {showAuthPrompt && <AuthPrompt onDismiss={() => setShowAuthPrompt(false)} />}
         </>
