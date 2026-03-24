@@ -27,6 +27,7 @@ import {
 
 const HISTORY_KEY = "generation_history";
 const MAX_HISTORY = 50;
+const DRAFT_STATE_KEY = "draft_form_state";
 
 /** Replace data URLs with empty strings before persisting to localStorage (data lives in IndexedDB) */
 function stripDataUrls(images: ReferenceImage[]): ReferenceImage[] {
@@ -97,6 +98,30 @@ export default function Home() {
       setModel(imageModels[0].id);
     }
   }, [imageModels, model]);
+
+  // Persist draft form state to sessionStorage so it survives OAuth redirects
+  useEffect(() => {
+    // Only persist once we have a meaningful state (prompt or model set)
+    if (!prompt && !model) return;
+    const draft = { prompt, model, aspectRatio, resolution, duration, generateAudio };
+    sessionStorage.setItem(DRAFT_STATE_KEY, JSON.stringify(draft));
+  }, [prompt, model, aspectRatio, resolution, duration, generateAudio]);
+
+  // Restore draft state after returning from OAuth redirect
+  useEffect(() => {
+    const saved = sessionStorage.getItem(DRAFT_STATE_KEY);
+    if (!saved) return;
+    try {
+      const draft = JSON.parse(saved);
+      if (draft.prompt) setPrompt(draft.prompt);
+      if (draft.model) setModel(draft.model);
+      if (draft.aspectRatio) setAspectRatio(draft.aspectRatio);
+      if (draft.resolution) setResolution(draft.resolution);
+      if (draft.duration) setDuration(draft.duration);
+      if (draft.generateAudio !== undefined) setGenerateAudio(draft.generateAudio);
+    } catch {}
+    sessionStorage.removeItem(DRAFT_STATE_KEY);
+  }, []);
 
   useEffect(() => {
     if (!localStorage.getItem("has_seen_intro")) {
@@ -200,6 +225,12 @@ export default function Home() {
 
     if (!willBeVideo && EXTENDED_ASPECT_RATIOS.includes(aspectRatio)) {
       setAspectRatio("1:1");
+    }
+
+    // Force audio on for models that require it (e.g. Sora)
+    if (willBeVideo) {
+      const config = getVideoConfig(newModel);
+      if (config.requiresAudio) setGenerateAudio(true);
     }
   }
 

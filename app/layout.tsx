@@ -27,6 +27,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body
         className={`${inter.variable} ${openSans.variable} antialiased bg-background text-foreground`}
+        suppressHydrationWarning
       >
         <Providers>{children}</Providers>
       </body>

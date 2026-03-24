@@ -34,6 +34,8 @@ export interface VideoModelConfig {
   resolutions: string[];
   aspectRatios: string[];
   supportsAudio: boolean;
+  /** When true, audio generation is mandatory and cannot be toggled off */
+  requiresAudio?: boolean;
 }
 
 export const VIDEO_MODEL_CONFIGS: Record<string, VideoModelConfig> = {
@@ -48,6 +50,7 @@ export const VIDEO_MODEL_CONFIGS: Record<string, VideoModelConfig> = {
     resolutions: ["720p", "1080p"],
     aspectRatios: ["16:9", "9:16"],
     supportsAudio: true,
+    requiresAudio: true,
   },
   "bytedance/seedance-1-5-pro": {
     durations: [4, 5, 6, 7, 8, 9, 10, 11, 12],

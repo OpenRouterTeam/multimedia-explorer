@@ -137,14 +137,18 @@ export function OutputCardBody({
           </div>
 
           {videoConfig.supportsAudio && (
-            <label className="flex items-center gap-2 cursor-pointer pb-0.5">
+            <label
+              className={`flex items-center gap-2 pb-0.5 ${videoConfig.requiresAudio ? "cursor-default" : "cursor-pointer"}`}
+              title={videoConfig.requiresAudio ? "Sora always generates audio — it cannot be disabled" : undefined}
+            >
               <input
                 type="checkbox"
-                checked={generateAudio ?? false}
-                onChange={(e) => onGenerateAudioChange?.(e.target.checked)}
-                className="w-3.5 h-3.5 rounded border-border bg-surface accent-accent cursor-pointer"
+                checked={videoConfig.requiresAudio || (generateAudio ?? false)}
+                onChange={(e) => !videoConfig.requiresAudio && onGenerateAudioChange?.(e.target.checked)}
+                disabled={videoConfig.requiresAudio}
+                className={`w-3.5 h-3.5 rounded border-border bg-surface accent-accent ${videoConfig.requiresAudio ? "cursor-default opacity-70" : "cursor-pointer"}`}
               />
-              <span className="text-xs text-muted">Generate Audio</span>
+              <span className={`text-xs ${videoConfig.requiresAudio ? "text-muted/70" : "text-muted"}`}>Generate Audio</span>
             </label>
           )}
         </div>
