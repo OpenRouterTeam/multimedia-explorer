@@ -78,14 +78,14 @@ export default function AccordionCards({
   ];
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {/* Model card — full width, always visible */}
-      <div className="px-4 py-4 bg-surface/50 border border-border rounded-lg">
+      <div className="px-5 py-4 bg-surface/80 backdrop-blur-sm border border-border rounded-xl hover:border-accent/20 transition-all">
         <ModelCardBody model={model} onModelChange={onModelChange} imageModels={imageModels} videoModels={videoModels} loading={modelsLoading} />
       </div>
 
       {/* Remaining card headers row */}
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-3">
         {cards.map((card) => (
           <div
             key={card.id}
@@ -93,10 +93,10 @@ export default function AccordionCards({
             tabIndex={0}
             onClick={() => toggle(card.id)}
             onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") toggle(card.id); }}
-            className={`px-3 py-2.5 rounded-lg border text-left transition-colors cursor-pointer ${
+            className={`px-4 py-3 rounded-xl border text-left transition-all cursor-pointer ${
               expandedCard === card.id
-                ? "bg-surface border-accent/50"
-                : "bg-surface/50 border-border hover:border-accent/30"
+                ? "bg-surface/90 border-accent/50 shadow-[0_0_12px_rgba(59,130,246,0.2)]"
+                : "bg-surface/60 border-border hover:border-accent/30 hover:shadow-[0_0_8px_rgba(59,130,246,0.08)]"
             }`}
           >
             {card.header}
@@ -106,8 +106,8 @@ export default function AccordionCards({
 
       {/* Expanded body for non-model cards */}
       {expandedCard && expandedCard !== "model" && (
-        <div className="bg-surface/50 border border-border rounded-lg overflow-hidden">
-          <div className="pt-4 px-4 pb-2">
+        <div className="bg-surface/80 backdrop-blur-sm border border-accent/30 rounded-xl overflow-hidden shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+          <div className="pt-5 px-5 pb-3">
             {expandedCard === "mood" && (
               <MoodCardBody>
                 <Moodboard
@@ -143,7 +143,7 @@ export default function AccordionCards({
           <button
             type="button"
             onClick={() => setExpandedCard(null)}
-            className="w-full mt-2 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-muted hover:text-foreground transition-colors flex items-center justify-center"
+            className="w-full mt-2 py-2 bg-surface-hover/60 hover:bg-accent/10 text-muted hover:text-accent transition-all flex items-center justify-center cursor-pointer"
             aria-label="Collapse card"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

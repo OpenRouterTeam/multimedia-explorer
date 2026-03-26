@@ -17,24 +17,24 @@ const AuthContext = React.createContext<{
 export { AuthContext as SignInButtonAuthContext };
 
 const signInButtonVariants = cva(
-  "inline-flex items-center justify-center gap-2 font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-400 disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
+  "inline-flex items-center justify-center gap-2 font-medium tracking-wide transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent/50 disabled:pointer-events-none disabled:opacity-40 cursor-pointer",
   {
     variants: {
       variant: {
         default:
-          "rounded-lg border border-neutral-300 bg-white text-neutral-900 shadow-sm hover:bg-neutral-50 hover:border-neutral-400 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800",
+          "rounded-lg border border-border bg-surface text-foreground hover:border-accent/40 hover:shadow-[0_0_10px_rgba(59,130,246,0.15)]",
         minimal:
-          "text-neutral-700 underline-offset-4 hover:underline dark:text-neutral-300",
+          "text-muted underline-offset-4 hover:text-accent hover:underline",
         branded:
-          "rounded-lg bg-neutral-900 text-white shadow hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100",
+          "rounded-lg bg-accent text-white shadow-[0_0_10px_rgba(59,130,246,0.2)] hover:bg-accent-hover hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]",
         icon:
-          "rounded-lg border border-neutral-300 bg-white text-neutral-900 shadow-sm hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800 aspect-square",
+          "rounded-lg border border-border bg-surface text-foreground hover:border-accent/40 hover:shadow-[0_0_10px_rgba(59,130,246,0.15)] aspect-square",
         cta:
-          "rounded-xl bg-neutral-900 text-white shadow-lg hover:bg-neutral-800 hover:scale-[1.02] active:scale-[0.98] dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100",
+          "rounded-xl bg-accent text-white shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:bg-accent-hover hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:scale-[1.02] active:scale-[0.98]",
       },
       size: {
-        sm: "h-8 px-3 text-xs",
-        default: "h-10 px-5 text-sm",
+        sm: "h-9 px-4 text-xs",
+        default: "h-11 px-5 text-sm",
         lg: "h-12 px-8 text-base",
         xl: "h-14 px-10 text-lg",
       },

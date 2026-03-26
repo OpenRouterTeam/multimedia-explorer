@@ -174,10 +174,12 @@ export default function GenerateForm({
   const mediaType = isVideoModel ? "Video" : "Image";
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-heading font-semibold">Generate {mediaType}</h2>
+    <div className="space-y-5">
+      <h2 className="text-base font-heading font-bold tracking-tight text-glow-sm">
+        // GENERATE {mediaType.toUpperCase()}
+      </h2>
 
-      <form onSubmit={handleGenerate} className="space-y-3">
+      <form onSubmit={handleGenerate} className="space-y-4">
         {/* Prompt textarea */}
         <textarea
           value={prompt}
@@ -200,7 +202,7 @@ export default function GenerateForm({
               : "Describe the image you want to generate..."
           }
           rows={3}
-          className="w-full px-3 py-2 bg-surface border border-border rounded-lg text-sm text-foreground placeholder:text-muted focus:outline-none focus:border-accent transition-colors resize-none"
+          className="w-full px-4 py-3 bg-surface border border-border rounded-xl text-sm text-foreground placeholder:text-muted/60 focus:outline-none focus:border-accent/60 focus:shadow-[0_0_12px_rgba(59,130,246,0.15)] transition-all resize-none"
         />
 
         {/* Bottom bar: Improve prompt (left) + Generate (right) */}
@@ -210,7 +212,7 @@ export default function GenerateForm({
             <select
               value={improveModel}
               onChange={(e) => setImproveModel(e.target.value)}
-              className="px-2 py-1.5 bg-surface border border-border rounded-lg text-xs font-medium text-muted focus:outline-none focus:border-accent transition-colors cursor-pointer"
+              className="px-3 py-2 bg-surface border border-border rounded-lg text-xs text-muted focus:outline-none focus:border-accent/60 transition-all cursor-pointer"
             >
               {MOOD_MODELS.map((m) => (
                 <option key={m.id} value={m.id}>
@@ -222,12 +224,12 @@ export default function GenerateForm({
               type="button"
               onClick={handleImprovePrompt}
               disabled={improving || !prompt.trim()}
-              className="px-2.5 py-1.5 text-xs font-medium bg-surface border border-border rounded-lg hover:border-accent/50 transition-colors disabled:opacity-50 cursor-pointer"
+              className="px-3 py-2 text-xs tracking-wide bg-surface border border-border rounded-lg hover:border-accent/40 hover:shadow-[0_0_8px_rgba(59,130,246,0.1)] transition-all disabled:opacity-40 cursor-pointer"
             >
               {improving ? (
-                <span className="flex items-center gap-1.5">
-                  <span className="w-3 h-3 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-                  Improving…
+                <span className="flex items-center gap-2">
+                  <span className="retro-spinner !w-3 !h-3 !border-[1.5px]" />
+                  Improving...
                 </span>
               ) : (
                 "Improve Prompt"
@@ -237,7 +239,7 @@ export default function GenerateForm({
               <button
                 type="button"
                 onClick={handleUndo}
-                className="px-2.5 py-1.5 text-xs font-medium text-muted hover:text-foreground border border-border rounded-lg hover:border-accent/50 transition-colors cursor-pointer"
+                className="px-3 py-2 text-xs tracking-wide text-muted hover:text-accent border border-border rounded-lg hover:border-accent/40 transition-all cursor-pointer"
                 title="Undo prompt improvement"
               >
                 Undo
@@ -249,12 +251,12 @@ export default function GenerateForm({
           <button
             type="submit"
             disabled={loading || !prompt.trim()}
-            className="flex items-center gap-2 px-4 py-1.5 bg-accent hover:bg-accent-hover text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
+            className="flex items-center gap-2 px-6 py-2.5 bg-accent hover:bg-accent-hover text-white text-sm font-medium tracking-wide rounded-lg transition-all hover:shadow-[0_0_15px_rgba(59,130,246,0.4)] disabled:opacity-40 cursor-pointer"
           >
             {loading ? (
               <>
-                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Generating…
+                <span className="retro-spinner !w-4 !h-4 !border-[1.5px] !border-white/30 !border-t-white" />
+                Generating...
               </>
             ) : (
               <>
@@ -270,7 +272,7 @@ export default function GenerateForm({
         {error && (() => {
           const isCredit = /insufficient.*credits|out of credits|not enough credits|credits.*required|payment required/i.test(error);
           return isCredit ? (
-            <div className="flex items-center gap-2 px-3 py-2.5 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+            <div className="flex items-center gap-2 px-4 py-3 bg-yellow-500/5 border border-yellow-500/20 rounded-xl">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-yellow-400 shrink-0">
                 <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                 <line x1="12" y1="9" x2="12" y2="13" />
@@ -281,13 +283,13 @@ export default function GenerateForm({
                 href="https://openrouter.ai/settings/credits"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="shrink-0 px-3 py-1 text-xs font-medium bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-300 rounded-md transition-colors"
+                className="shrink-0 px-3 py-1.5 text-xs tracking-wide bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-300 border border-yellow-500/20 rounded-lg transition-all"
               >
                 Add credits
               </a>
             </div>
           ) : (
-            <div className="flex items-start gap-2 px-3 py-2.5 bg-red-500/10 border border-red-500/20 rounded-lg">
+            <div className="flex items-start gap-2 px-4 py-3 bg-red-500/5 border border-red-500/20 rounded-xl">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-400 shrink-0 mt-0.5">
                 <circle cx="12" cy="12" r="10" />
                 <line x1="12" y1="8" x2="12" y2="12" />

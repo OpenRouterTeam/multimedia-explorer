@@ -16,7 +16,7 @@ function ElapsedTime() {
     return () => clearInterval(timer);
   }, []);
 
-  return <span className="tabular-nums">{elapsed}s</span>;
+  return <span className="tabular-nums text-accent">{elapsed}s</span>;
 }
 
 export default function ImageResult({
@@ -47,25 +47,25 @@ export default function ImageResult({
 
   if (loading || isVideoGenerating) {
     const statusSubtext: Record<string, string> = {
-      submitting: "Submitting video job…",
+      submitting: "Submitting video job...",
       pending: "Queued for processing",
       in_progress: "Generation in progress",
     };
 
     return (
-      <div className="flex flex-col items-center justify-center py-16 space-y-4">
-        <div className="w-10 h-10 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+      <div className="flex flex-col items-center justify-center py-20 space-y-5">
+        <div className="retro-spinner animate-pulse-glow" />
         {isVideoGenerating ? (
-          <div className="flex flex-col items-center gap-1">
-            <p className="text-sm text-muted">
-              Video is being generated… <ElapsedTime />
+          <div className="flex flex-col items-center gap-1.5">
+            <p className="text-sm text-muted tracking-wide">
+              Video is being generated... <ElapsedTime />
             </p>
-            <p className="text-xs text-muted/60">
+            <p className="text-xs text-muted/50 tracking-wide">
               {statusSubtext[videoStatus!] ?? ""}
             </p>
           </div>
         ) : (
-          <p className="text-sm text-muted">Generating your image…</p>
+          <p className="text-sm text-muted tracking-wide">Generating your image...</p>
         )}
       </div>
     );
@@ -73,9 +73,9 @@ export default function ImageResult({
 
   if (loadingVideo) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 space-y-4">
-        <div className="w-10 h-10 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-muted">Loading video from history…</p>
+      <div className="flex flex-col items-center justify-center py-20 space-y-5">
+        <div className="retro-spinner" />
+        <p className="text-sm text-muted tracking-wide">Loading video from history...</p>
       </div>
     );
   }
@@ -83,7 +83,7 @@ export default function ImageResult({
   if (videoStatus === "failed" && videoError) {
     const isCredit = /insufficient.*credits|out of credits|not enough credits|credits.*required|payment required/i.test(videoError);
     return (
-      <div className="flex flex-col items-center justify-center py-16 space-y-4">
+      <div className="flex flex-col items-center justify-center py-20 space-y-4">
         {isCredit ? (
           <>
             <p className="text-sm text-yellow-400">{videoError}</p>
@@ -91,7 +91,7 @@ export default function ImageResult({
               href="https://openrouter.ai/settings/credits"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 text-sm font-medium bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-300 rounded-lg transition-colors"
+              className="px-4 py-2.5 text-sm tracking-wide bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-300 border border-yellow-500/20 rounded-lg transition-all"
             >
               Add credits
             </a>
@@ -127,11 +127,11 @@ export default function ImageResult({
   const mediaUrl = result.type === "image" ? result.imageUrl : result.videoUrl;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-heading font-semibold">Result</h2>
+        <h2 className="text-base font-heading font-bold tracking-tight text-glow-sm">// RESULT</h2>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-muted">{result.model}</span>
+          <span className="text-xs text-muted/60 tracking-wide">{result.model}</span>
           {!isVideo && onAddAsInputImage && (
             <button
               onClick={() => {
@@ -140,15 +140,15 @@ export default function ImageResult({
                   setAdded(true);
                 }
               }}
-              className="px-3 py-1.5 text-xs font-medium border border-border rounded-lg hover:border-accent hover:text-accent transition-colors cursor-pointer"
+              className="px-4 py-2 text-xs tracking-wide border border-border rounded-lg hover:border-accent/40 hover:text-accent hover:shadow-[0_0_8px_rgba(59,130,246,0.1)] transition-all cursor-pointer"
             >
-              {added ? "Added as Input" : "Add as Input Image"}
+              {added ? "Added" : "Add as Input"}
             </button>
           )}
           {!isExpiredVideo && (
             <button
               onClick={handleDownload}
-              className="px-3 py-1.5 text-xs font-medium border border-border rounded-lg hover:border-accent hover:text-accent transition-colors cursor-pointer"
+              className="px-4 py-2 text-xs tracking-wide border border-border rounded-lg hover:border-accent/40 hover:text-accent hover:shadow-[0_0_8px_rgba(59,130,246,0.1)] transition-all cursor-pointer"
             >
               Download
             </button>
@@ -156,9 +156,9 @@ export default function ImageResult({
         </div>
       </div>
 
-      <div className="rounded-lg overflow-hidden border border-border bg-surface">
+      <div className="rounded-xl overflow-hidden border border-border bg-surface/50 hover:border-accent/20 transition-all">
         {isExpiredVideo ? (
-          <div className="flex flex-col items-center justify-center py-16 space-y-3 text-muted">
+          <div className="flex flex-col items-center justify-center py-20 space-y-3 text-muted">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18" />
               <line x1="7" y1="2" x2="7" y2="22" />
@@ -169,7 +169,7 @@ export default function ImageResult({
               <line x1="17" y1="7" x2="22" y2="7" />
               <line x1="17" y1="17" x2="22" y2="17" />
             </svg>
-            <p className="text-sm">This video has expired and is no longer available for playback.</p>
+            <p className="text-sm tracking-wide">This video has expired and is no longer available.</p>
           </div>
         ) : isVideo ? (
           <video

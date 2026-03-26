@@ -1,14 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --background: #09090b;
-  --foreground: #fafafa;
+  --background: #050508;
+  --foreground: #e2e8f0;
   --accent: #3b82f6;
   --accent-hover: #60a5fa;
-  --surface: #18181b;
-  --surface-hover: #1e1f25;
-  --border: #27272a;
-  --muted: #a1a1aa;
+  --accent-glow: rgba(59, 130, 246, 0.5);
+  --surface: #0c0c14;
+  --surface-hover: #12121f;
+  --border: #1e293b;
+  --muted: #64748b;
+  --cyan: #38bdf8;
 }
 
 @theme inline {
@@ -20,12 +22,135 @@
   --color-surface-hover: var(--surface-hover);
   --color-border: var(--border);
   --color-muted: var(--muted);
-  --font-sans: var(--font-inter);
-  --font-heading: var(--font-open-sans);
+  --color-cyan: var(--cyan);
+  --font-sans: var(--font-mono);
+  --font-heading: var(--font-heading);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-sans), ui-monospace, monospace;
+}
+
+/* CRT Scanline overlay */
+.scanlines::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.06) 2px,
+    rgba(0, 0, 0, 0.06) 4px
+  );
+  z-index: 9999;
+}
+
+/* CRT vignette overlay */
+.crt-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 50%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  z-index: 9998;
+}
+
+/* Glow utilities */
+.glow-accent {
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.3), 0 0 30px rgba(59, 130, 246, 0.1);
+}
+
+.glow-accent-sm {
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+}
+
+.glow-accent-lg {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4), 0 0 40px rgba(59, 130, 246, 0.15);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.3), 0 0 30px rgba(56, 189, 248, 0.1);
+}
+
+/* Pulse glow animation */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5), 0 0 40px rgba(59, 130, 246, 0.2);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Retro ring loader */
+@keyframes retro-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.retro-spinner {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: retro-ring 1s linear infinite;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.3), inset 0 0 10px rgba(59, 130, 246, 0.1);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+  box-shadow: 0 0 6px rgba(59, 130, 246, 0.4);
+}
+
+/* Text glow for headings */
+.text-glow {
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
+.text-glow-sm {
+  text-shadow: 0 0 6px rgba(59, 130, 246, 0.2);
+}
+
+/* Select styling */
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2rem;
+  appearance: none;
+}
+
+select option {
+  background: var(--surface);
+  color: var(--foreground);
 }

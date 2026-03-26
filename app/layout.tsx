@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { Inter, Open_Sans } from "next/font/google";
+import { JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import Providers from "@/components/providers";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
 });
 
-const openSans = Open_Sans({
-  variable: "--font-open-sans",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-heading",
   subsets: ["latin"],
 });
 
@@ -26,9 +26,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${inter.variable} ${openSans.variable} antialiased bg-background text-foreground`}
+        className={`${jetbrainsMono.variable} ${spaceGrotesk.variable} antialiased bg-background text-foreground scanlines`}
         suppressHydrationWarning
       >
+        <div className="crt-vignette" />
         <Providers>{children}</Providers>
       </body>
     </html>

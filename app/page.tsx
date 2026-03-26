@@ -435,62 +435,61 @@ export default function Home() {
   const showResult = mediaResult || generating || isVideoGenerating || loadingVideo || videoState.status === "failed";
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
       {/* Header */}
-      <header className="border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
+      <header className="border-b border-border/60">
+        <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-accent/20 border border-accent/40 flex items-center justify-center glow-accent-sm">
               <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
                 fill="none"
-                className="text-white"
+                className="text-accent"
               >
-                <path
-                  d="M2 4l6-3 6 3v8l-6 3-6-3V4z"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M8 7v6M2 4l6 3 6-3"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinejoin="round"
-                />
+                {/* Film frame */}
+                <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" strokeWidth="1.5" />
+                {/* Sprocket holes */}
+                <rect x="4" y="4" width="2" height="3" rx="0.5" fill="currentColor" opacity="0.4" />
+                <rect x="18" y="4" width="2" height="3" rx="0.5" fill="currentColor" opacity="0.4" />
+                <rect x="4" y="17" width="2" height="3" rx="0.5" fill="currentColor" opacity="0.4" />
+                <rect x="18" y="17" width="2" height="3" rx="0.5" fill="currentColor" opacity="0.4" />
+                {/* Play triangle */}
+                <path d="M10 9.5L16 12L10 14.5V9.5Z" fill="currentColor" />
               </svg>
             </div>
             <div>
-              <h1 className="text-lg font-heading font-semibold">
+              <h1 className="text-lg font-heading font-bold tracking-tight text-glow-sm">
                 Media Playground
               </h1>
-              <p className="text-[10px] text-muted leading-tight">
+              <p className="text-[11px] text-muted tracking-wide">
                 Powered by{" "}
                 <a
                   href="https://openrouter.ai"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-foreground transition-colors"
+                  className="text-accent/80 hover:text-accent transition-colors"
                 >
                   OpenRouter
                 </a>
+                {" "}<span className="text-border">|</span>{" "}
+                <span className="text-muted/60">multi-model media generation</span>
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <button
               onClick={() => setShowWhatIsThis(true)}
-              className="text-xs text-muted hover:text-foreground transition-colors cursor-pointer underline underline-offset-2"
+              className="text-xs text-muted hover:text-accent transition-colors cursor-pointer tracking-wide"
             >
-              What is this?
+              [ ? ]
             </button>
             {apiKey ? (
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 text-sm rounded-lg border border-neutral-700 text-neutral-300 hover:text-white hover:border-neutral-500 transition-colors cursor-pointer"
+                className="px-4 py-2.5 text-xs tracking-wide rounded-lg border border-border text-muted hover:text-foreground hover:border-accent/40 hover:shadow-[0_0_10px_rgba(59,130,246,0.1)] transition-all cursor-pointer"
               >
                 Sign out
               </button>
@@ -502,9 +501,9 @@ export default function Home() {
       </header>
 
       {/* Main content with timeline sidebar */}
-      <div className="max-w-4xl mx-auto px-4 py-8 flex gap-4">
+      <div className="max-w-5xl mx-auto px-6 py-10 flex gap-6">
         {/* Timeline */}
-        <div className="shrink-0 w-8">
+        <div className="shrink-0 w-10">
           <HistoryTimeline
             entries={history}
             activeId={activeHistoryId}
@@ -542,7 +541,7 @@ export default function Home() {
             />
 
             {/* Generate section */}
-            <section className="p-6 bg-surface/50 border border-border rounded-xl">
+            <section className="p-6 bg-surface/80 backdrop-blur-sm border border-border rounded-xl hover:border-border transition-all">
               <GenerateForm
                 apiKey={apiKey}
                 brandData={brandData}
@@ -563,7 +562,7 @@ export default function Home() {
 
             {/* Result section */}
             {showResult && (
-              <section className="p-6 bg-surface/50 border border-border rounded-xl">
+              <section className="p-6 bg-surface/80 backdrop-blur-sm border border-border rounded-xl">
                 <ImageResult
                   result={mediaResult}
                   loading={generating}
@@ -599,11 +598,11 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-border mt-auto">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between text-xs text-muted">
+      <footer className="border-t border-border/40 mt-auto">
+        <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between text-xs text-muted tracking-wide">
           <a
             href="https://openrouter.ai/docs/sdks"
-            className="hover:text-foreground transition-colors"
+            className="hover:text-accent transition-colors"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -611,19 +610,19 @@ export default function Home() {
           </a>
           <a
             href="https://github.com/OpenRouterTeam/media-playground"
-            className="hover:text-foreground transition-colors"
+            className="hover:text-accent transition-colors"
             target="_blank"
             rel="noopener noreferrer"
           >
             Fork on GitHub
           </a>
           <span>
-            All data is stored on your machine.{" "}
+            All data is stored locally.{" "}
             <button
               onClick={() => setShowDeleteConfirm(true)}
-              className="hover:text-foreground transition-colors cursor-pointer underline"
+              className="text-muted hover:text-red-400 transition-colors cursor-pointer"
             >
-              Delete Data
+              [Delete Data]
             </button>
           </span>
         </div>
@@ -631,25 +630,25 @@ export default function Home() {
 
       {/* Delete confirmation modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-surface border border-border rounded-xl p-6 max-w-sm mx-4 space-y-4">
-            <h3 className="text-sm font-heading font-semibold">
-              Delete all data?
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-surface border border-border rounded-xl p-8 max-w-sm mx-4 space-y-5 glow-accent-sm">
+            <h3 className="text-sm font-heading font-bold tracking-tight text-glow-sm">
+              // DELETE ALL DATA
             </h3>
-            <p className="text-xs text-muted">
+            <p className="text-xs text-muted leading-relaxed">
               This will permanently delete all your settings, API key, moodboard
               data, and generation history. This cannot be undone.
             </p>
-            <div className="flex gap-2 justify-end">
+            <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-3 py-1.5 text-xs font-medium border border-border rounded-lg hover:border-accent/50 transition-colors cursor-pointer"
+                className="px-4 py-2 text-xs tracking-wide border border-border rounded-lg hover:border-accent/40 hover:shadow-[0_0_8px_rgba(59,130,246,0.1)] transition-all cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteAllData}
-                className="px-3 py-1.5 text-xs font-medium bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors cursor-pointer"
+                className="px-4 py-2 text-xs tracking-wide bg-red-500/20 border border-red-500/40 text-red-400 hover:bg-red-500/30 hover:shadow-[0_0_10px_rgba(239,68,68,0.2)] rounded-lg transition-all cursor-pointer"
               >
                 Delete Everything
               </button>
@@ -661,20 +660,20 @@ export default function Home() {
       {/* What is this? modal */}
       {showWhatIsThis && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
           onClick={() => dismissIntro()}
         >
           <div
-            className="bg-surface border border-border rounded-xl p-8 max-w-lg mx-4 space-y-6"
+            className="bg-surface border border-accent/30 rounded-xl p-8 max-w-lg mx-4 space-y-6 glow-accent-sm"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between">
-              <h2 className="text-lg font-heading font-semibold">
-                Welcome to Media Playground
+              <h2 className="text-lg font-heading font-bold tracking-tight text-glow-sm">
+                // MEDIA PLAYGROUND
               </h2>
               <button
                 onClick={() => dismissIntro()}
-                className="text-muted hover:text-foreground transition-colors cursor-pointer -mt-1"
+                className="text-muted hover:text-accent transition-colors cursor-pointer -mt-1"
               >
                 <svg
                   width="20"
@@ -701,26 +700,26 @@ export default function Home() {
               >
                 OpenRouter
               </a>{" "}
-              lets you to access text, image, and video generating models from a
+              lets you access text, image, and video generating models from a
               single API. This makes it easy to use many models together to
-              generate media. Let's try it!
+              generate media. Let&apos;s try it!
             </p>
 
             <div className="space-y-3">
-              <h3 className="text-sm font-heading font-semibold">
-                Get started
+              <h3 className="text-sm font-heading font-bold tracking-tight">
+                // GET STARTED
               </h3>
               <ol className="space-y-3 text-sm text-muted leading-relaxed list-decimal list-inside">
                 <li>
                   Choose{" "}
-                  <span className="text-foreground font-medium">
+                  <span className="text-accent font-medium">
                     Nano Banana 2
                   </span>{" "}
                   as your model.
                 </li>
                 <li>
                   Click{" "}
-                  <span className="text-foreground font-medium">Set Mood</span>{" "}
+                  <span className="text-accent font-medium">Set Mood</span>{" "}
                   and enter your company URL to pull in your brand colors and
                   style.
                 </li>
@@ -738,7 +737,7 @@ export default function Home() {
             <div className="flex justify-end">
               <button
                 onClick={() => dismissIntro()}
-                className="px-4 py-2 text-sm font-medium bg-accent hover:bg-accent-hover text-white rounded-lg transition-colors cursor-pointer"
+                className="px-5 py-2.5 text-sm font-medium tracking-wide bg-accent hover:bg-accent-hover text-white rounded-lg transition-all hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] cursor-pointer"
               >
                 Got it
               </button>
