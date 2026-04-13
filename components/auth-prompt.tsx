@@ -21,7 +21,7 @@ export default function AuthPrompt({
         </svg>
       </button>
       <p className="text-sm text-foreground/90 pr-6 tracking-wide">
-        You need an OpenRouter API key to continue.
+        You must sign in with OpenRouter to generate media.
       </p>
       <SignInButton variant="default" size="sm" />
     </div>
