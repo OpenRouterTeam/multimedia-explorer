@@ -9,7 +9,7 @@ import GenerateForm from "@/components/generate-form";
 import ImageResult from "@/components/image-result";
 import HistoryTimeline from "@/components/history-timeline";
 import {
-  MOOD_MODELS,
+  DEFAULT_TEXT_MODEL,
   EXTENDED_ASPECT_RATIOS,
   DEFAULT_VIDEO_CONFIG,
   type VideoModelConfig,
@@ -28,6 +28,11 @@ import {
 
 const HISTORY_KEY = "generation_history";
 const MAX_HISTORY = 50;
+
+function uuid() {
+  return crypto.randomUUID?.() ??
+    Math.random().toString(36).slice(2) + Date.now().toString(36);
+}
 const DRAFT_STATE_KEY = "draft_form_state";
 
 /** Replace data URLs with empty strings before persisting to localStorage (data lives in IndexedDB) */
@@ -42,9 +47,9 @@ export default function Home() {
   const { apiKey: authApiKey, signOut } = useOpenRouterAuth();
   const envKey = process.env.NEXT_PUBLIC_OPENROUTER_API_KEY ?? null;
   const apiKey = envKey || authApiKey;
-  const { imageModels, videoModels, videoModelConfigs, loading: modelsLoading } = useModels();
+  const { imageModels, videoModels, textModels, videoModelConfigs, loading: modelsLoading } = useModels();
   const [brandData, setBrandData] = useState<BrandData | null>(null);
-  const [moodModel, setMoodModel] = useState(MOOD_MODELS[0].id);
+  const [moodModel, setMoodModel] = useState(DEFAULT_TEXT_MODEL);
   const [model, setModel] = useState("");
   const [referenceImages, setReferenceImages] = useState<ReferenceImage[]>([]);
   const [aspectRatio, setAspectRatio] = useState("1:1");
@@ -264,7 +269,7 @@ export default function Home() {
 
     // Reset all state
     setBrandData(null);
-    setMoodModel(MOOD_MODELS[0].id);
+    setMoodModel(DEFAULT_TEXT_MODEL);
     setModel(imageModels[0]?.id ?? "");
     setReferenceImages([]);
     setAspectRatio("1:1");
@@ -282,7 +287,7 @@ export default function Home() {
     // Clear any saved "current" snapshot since we have a new generation
     setSavedCurrent(null);
 
-    const id = crypto.randomUUID();
+    const id = uuid();
     const entry: HistoryEntry = {
       id,
       timestamp: Date.now(),
@@ -316,7 +321,7 @@ export default function Home() {
         // Clear any saved "current" snapshot since we have a new generation
         setSavedCurrent(null);
 
-        const id = crypto.randomUUID();
+        const id = uuid();
         const entry: HistoryEntry = {
           id,
           timestamp: Date.now(),
@@ -529,6 +534,7 @@ export default function Home() {
               onBrandData={handleBrandData}
               moodModel={moodModel}
               onMoodModelChange={handleMoodModelChange}
+              textModels={textModels}
               model={model}
               onModelChange={handleModelChange}
               imageModels={imageModels}
@@ -554,6 +560,7 @@ export default function Home() {
                 apiKey={apiKey}
                 brandData={brandData}
                 model={model}
+                textModels={textModels}
                 referenceImages={referenceImages}
                 aspectRatio={aspectRatio}
                 resolution={resolution}
@@ -579,7 +586,7 @@ export default function Home() {
                   videoError={videoState.error}
                   onAddAsInputImage={(url) => {
                     const newRef = {
-                      id: crypto.randomUUID(),
+                      id: uuid(),
                       url,
                       name: `generation-${Date.now()}.png`,
                     };

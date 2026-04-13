@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MOOD_MODELS } from "@/lib/types";
+import type { ModelOption } from "@/hooks/use-models";
 import AuthPrompt from "./auth-prompt";
 
 export interface BrandData {
@@ -35,12 +35,14 @@ export default function Moodboard({
   onBrandData,
   moodModel,
   onMoodModelChange,
+  textModels,
 }: {
   apiKey: string | null;
   brandData: BrandData | null;
   onBrandData: (data: BrandData | null) => void;
   moodModel: string;
   onMoodModelChange: (model: string) => void;
+  textModels: ModelOption[];
 }) {
   const [mode, setMode] = useState<MoodMode>("url");
   const [url, setUrl] = useState("");
@@ -102,7 +104,7 @@ export default function Moodboard({
   }
 
   const generatedModelId = brandData?.generatedByModel ?? moodModel;
-  const generatedModelLabel = MOOD_MODELS.find((m) => m.id === generatedModelId)?.label ?? generatedModelId;
+  const generatedModelLabel = textModels.find((m) => m.id === generatedModelId)?.label ?? generatedModelId;
 
   return (
     <div className="space-y-4">
@@ -165,7 +167,7 @@ export default function Moodboard({
                 onChange={(e) => onMoodModelChange(e.target.value)}
                 className="flex-1 px-3 py-2.5 bg-surface border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-accent/60 transition-all cursor-pointer"
               >
-                {MOOD_MODELS.map((m) => (
+                {textModels.map((m) => (
                   <option key={m.id} value={m.id}>
                     {m.label}
                   </option>

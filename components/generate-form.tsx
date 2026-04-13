@@ -2,14 +2,15 @@
 
 import { useState } from "react";
 import type { BrandData } from "./moodboard";
-import type { ReferenceImage, MediaResult } from "@/lib/types";
-import { MOOD_MODELS } from "@/lib/types";
+import { DEFAULT_TEXT_MODEL, type ReferenceImage, type MediaResult } from "@/lib/types";
+import type { ModelOption } from "@/hooks/use-models";
 import AuthPrompt from "./auth-prompt";
 
 export default function GenerateForm({
   apiKey,
   brandData,
   model,
+  textModels,
   referenceImages,
   aspectRatio,
   resolution,
@@ -25,6 +26,7 @@ export default function GenerateForm({
   apiKey: string | null;
   brandData: BrandData | null;
   model: string;
+  textModels: ModelOption[];
   referenceImages: ReferenceImage[];
   aspectRatio: string;
   resolution: string;
@@ -48,7 +50,7 @@ export default function GenerateForm({
   const [loading, setLoadingState] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
-  const [improveModel, setImproveModel] = useState(MOOD_MODELS[0].id);
+  const [improveModel, setImproveModel] = useState(DEFAULT_TEXT_MODEL);
   const [improving, setImproving] = useState(false);
   const [previousPrompt, setPreviousPrompt] = useState<string | null>(null);
 
@@ -214,7 +216,7 @@ export default function GenerateForm({
               onChange={(e) => setImproveModel(e.target.value)}
               className="px-3 py-2 bg-surface border border-border rounded-lg text-xs text-muted focus:outline-none focus:border-accent/60 transition-all cursor-pointer"
             >
-              {MOOD_MODELS.map((m) => (
+              {textModels.map((m) => (
                 <option key={m.id} value={m.id}>
                   {m.label}
                 </option>

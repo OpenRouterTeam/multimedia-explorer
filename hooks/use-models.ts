@@ -11,6 +11,7 @@ export interface ModelOption {
 interface ModelsState {
   imageModels: ModelOption[];
   videoModels: ModelOption[];
+  textModels: ModelOption[];
   videoModelConfigs: Record<string, VideoModelConfig>;
   loading: boolean;
 }
@@ -18,6 +19,7 @@ interface ModelsState {
 interface ApiResponse {
   image: ModelOption[];
   video: ModelOption[];
+  text: ModelOption[];
   videoModelConfigs: Record<string, VideoModelConfig>;
 }
 
@@ -26,6 +28,7 @@ let cachedData: ApiResponse | null = null;
 export function useModels(): ModelsState {
   const [imageModels, setImageModels] = useState<ModelOption[]>(cachedData?.image ?? []);
   const [videoModels, setVideoModels] = useState<ModelOption[]>(cachedData?.video ?? []);
+  const [textModels, setTextModels] = useState<ModelOption[]>(cachedData?.text ?? []);
   const [videoModelConfigs, setVideoModelConfigs] = useState<Record<string, VideoModelConfig>>(cachedData?.videoModelConfigs ?? {});
   const [loading, setLoading] = useState(!cachedData);
 
@@ -41,6 +44,7 @@ export function useModels(): ModelsState {
         cachedData = data;
         setImageModels(data.image);
         setVideoModels(data.video);
+        setTextModels(data.text ?? []);
         setVideoModelConfigs(data.videoModelConfigs ?? {});
       })
       .catch(() => {
@@ -55,5 +59,5 @@ export function useModels(): ModelsState {
     };
   }, []);
 
-  return { imageModels, videoModels, videoModelConfigs, loading };
+  return { imageModels, videoModels, textModels, videoModelConfigs, loading };
 }

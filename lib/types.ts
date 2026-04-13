@@ -1,15 +1,4 @@
-export const MOOD_MODELS = [
-  { id: "google/gemini-2.5-flash", label: "Gemini 2.5 Flash" },
-  { id: "openai/gpt-5.2-pro", label: "GPT-5.2 Pro" },
-  { id: "anthropic/claude-sonnet-4.6", label: "Claude Sonnet 4.6" },
-  { id: "anthropic/claude-opus-4.6", label: "Claude Opus 4.6" },
-  { id: "deepseek/deepseek-v3.2", label: "DeepSeek V3.2" },
-  { id: "google/gemini-3-pro-preview", label: "Gemini 3 Pro Preview" },
-  { id: "mistralai/mistral-large-2512", label: "Mistral Large" },
-  { id: "qwen/qwen3.5-plus-02-15", label: "Qwen 3.5 Plus" },
-  { id: "x-ai/grok-4.1-fast", label: "Grok 4.1 Fast" },
-  { id: "openai/gpt-5.2-chat", label: "GPT-5.2 Chat" },
-];
+export const DEFAULT_TEXT_MODEL = "openai/gpt-5.4-mini";
 
 export interface ReferenceImage {
   id: string;

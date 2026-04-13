@@ -16,6 +16,7 @@ export default function AccordionCards({
   onBrandData,
   moodModel,
   onMoodModelChange,
+  textModels,
   model,
   onModelChange,
   imageModels,
@@ -39,6 +40,7 @@ export default function AccordionCards({
   onBrandData: (data: BrandData | null) => void;
   moodModel: string;
   onMoodModelChange: (model: string) => void;
+  textModels: ModelOption[];
   model: string;
   onModelChange: (model: string) => void;
   imageModels: ModelOption[];
@@ -118,6 +120,7 @@ export default function AccordionCards({
                   onBrandData={onBrandData}
                   moodModel={moodModel}
                   onMoodModelChange={onMoodModelChange}
+                  textModels={textModels}
                 />
               </MoodCardBody>
             )}

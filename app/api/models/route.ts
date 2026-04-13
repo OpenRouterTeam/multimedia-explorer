@@ -5,6 +5,7 @@ type ModelEntry = { id: string; label: string };
 type CacheData = {
   image: ModelEntry[];
   video: ModelEntry[];
+  text: ModelEntry[];
   videoModelConfigs: Record<string, VideoModelConfig>;
 };
 
@@ -58,13 +59,14 @@ export async function GET() {
   }
 
   try {
-    const [image, video, videoModelConfigs] = await Promise.all([
+    const [image, video, text, videoModelConfigs] = await Promise.all([
       fetchByModality("image"),
       fetchByModality("video"),
+      fetchByModality("text"),
       fetchVideoModelConfigs(),
     ]);
 
-    const result: CacheData = { image, video, videoModelConfigs };
+    const result: CacheData = { image, video, text, videoModelConfigs };
     cache = { data: result, ts: Date.now() };
 
     return Response.json(result);
