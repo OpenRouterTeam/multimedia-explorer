@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const OPENROUTER_VIDEO_URL = "https://openrouter.ai/api/alpha/videos";
+const OPENROUTER_VIDEO_URL = "https://openrouter.ai/api/v1/videos";
 
 export async function POST(request: NextRequest) {
   const authHeader = request.headers.get("authorization");

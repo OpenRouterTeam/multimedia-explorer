@@ -4,7 +4,7 @@ import {
   ASPECT_RATIOS,
   EXTENDED_ASPECT_RATIOS,
   RESOLUTIONS,
-  getVideoConfig,
+  type VideoModelConfig,
 } from "@/lib/types";
 
 const GEMINI_FLASH_MODEL = "google/gemini-3.1-flash-image-preview";
@@ -38,6 +38,7 @@ export function OutputCardBody({
   onResolutionChange,
   model,
   isVideoModel,
+  videoConfig,
   duration,
   onDurationChange,
   generateAudio,
@@ -49,12 +50,12 @@ export function OutputCardBody({
   onResolutionChange: (res: string) => void;
   model: string;
   isVideoModel?: boolean;
+  videoConfig?: VideoModelConfig | null;
   duration?: number;
   onDurationChange?: (d: number) => void;
   generateAudio?: boolean;
   onGenerateAudioChange?: (v: boolean) => void;
 }) {
-  const videoConfig = isVideoModel ? getVideoConfig(model) : null;
 
   const showExtended = !isVideoModel && model === GEMINI_FLASH_MODEL;
   const ratios = videoConfig

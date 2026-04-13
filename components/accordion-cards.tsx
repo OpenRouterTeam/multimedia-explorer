@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { CardId, ReferenceImage } from "@/lib/types";
+import type { CardId, ReferenceImage, VideoModelConfig } from "@/lib/types";
 import type { ModelOption } from "@/hooks/use-models";
 import type { BrandData } from "./moodboard";
 import Moodboard from "./moodboard";
@@ -28,6 +28,7 @@ export default function AccordionCards({
   resolution,
   onResolutionChange,
   isVideoModel,
+  videoConfig,
   duration,
   onDurationChange,
   generateAudio,
@@ -50,6 +51,7 @@ export default function AccordionCards({
   resolution: string;
   onResolutionChange: (res: string) => void;
   isVideoModel: boolean;
+  videoConfig: VideoModelConfig | null;
   duration: number;
   onDurationChange: (d: number) => void;
   generateAudio: boolean;
@@ -133,6 +135,7 @@ export default function AccordionCards({
                 onResolutionChange={onResolutionChange}
                 model={model}
                 isVideoModel={isVideoModel}
+                videoConfig={videoConfig}
                 duration={duration}
                 onDurationChange={onDurationChange}
                 generateAudio={generateAudio}

@@ -11,7 +11,8 @@ import HistoryTimeline from "@/components/history-timeline";
 import {
   MOOD_MODELS,
   EXTENDED_ASPECT_RATIOS,
-  getVideoConfig,
+  DEFAULT_VIDEO_CONFIG,
+  type VideoModelConfig,
   type ReferenceImage,
   type HistoryEntry,
   type MediaResult,
@@ -41,7 +42,7 @@ export default function Home() {
   const { apiKey: authApiKey, signOut } = useOpenRouterAuth();
   const envKey = process.env.NEXT_PUBLIC_OPENROUTER_API_KEY ?? null;
   const apiKey = envKey || authApiKey;
-  const { imageModels, videoModels, loading: modelsLoading } = useModels();
+  const { imageModels, videoModels, videoModelConfigs, loading: modelsLoading } = useModels();
   const [brandData, setBrandData] = useState<BrandData | null>(null);
   const [moodModel, setMoodModel] = useState(MOOD_MODELS[0].id);
   const [model, setModel] = useState("");
@@ -197,6 +198,12 @@ export default function Home() {
     localStorage.setItem("mood_model", m);
   }
 
+  function resolveVideoConfig(modelId: string): VideoModelConfig {
+    return videoModelConfigs[modelId] ?? DEFAULT_VIDEO_CONFIG;
+  }
+
+  const videoConfig = isVideoModel ? resolveVideoConfig(model) : null;
+
   function handleModelChange(newModel: string) {
     const wasVideo = isVideoModel;
     const willBeVideo = videoModels.some((m) => m.id === newModel);
@@ -206,7 +213,7 @@ export default function Home() {
     // Reset output settings when switching between image and video
     if (wasVideo !== willBeVideo) {
       if (willBeVideo) {
-        const config = getVideoConfig(newModel);
+        const config = resolveVideoConfig(newModel);
         setAspectRatio(config.aspectRatios[0]);
         setResolution(config.resolutions.includes("720p") ? "720p" : config.resolutions[0]);
         setDuration(config.durations[0]);
@@ -217,7 +224,7 @@ export default function Home() {
       resetVideo();
     } else if (willBeVideo) {
       // Switching between video models — reset to valid values for new model
-      const config = getVideoConfig(newModel);
+      const config = resolveVideoConfig(newModel);
       if (!config.durations.includes(duration)) setDuration(config.durations[0]);
       if (!config.resolutions.includes(resolution)) setResolution(config.resolutions.includes("720p") ? "720p" : config.resolutions[0]);
       if (!config.aspectRatios.includes(aspectRatio)) setAspectRatio(config.aspectRatios[0]);
@@ -229,7 +236,7 @@ export default function Home() {
 
     // Force audio on for models that require it (e.g. Sora)
     if (willBeVideo) {
-      const config = getVideoConfig(newModel);
+      const config = resolveVideoConfig(newModel);
       if (config.requiresAudio) setGenerateAudio(true);
     }
   }
@@ -534,6 +541,7 @@ export default function Home() {
               resolution={resolution}
               onResolutionChange={setResolution}
               isVideoModel={isVideoModel}
+              videoConfig={videoConfig}
               duration={duration}
               onDurationChange={setDuration}
               generateAudio={generateAudio}
