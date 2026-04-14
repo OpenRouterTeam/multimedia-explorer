@@ -577,7 +577,7 @@ export default function Home() {
 
             {/* Result section */}
             {showResult && (
-              <section className="p-6 bg-surface/80 backdrop-blur-sm border-2 border-border rounded-xl">
+              <section className="relative z-[41] p-6 bg-surface/80 backdrop-blur-sm border-2 border-border rounded-xl">
                 <ImageResult
                   result={mediaResult}
                   loading={generating}
