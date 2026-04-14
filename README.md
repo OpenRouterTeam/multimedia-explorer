@@ -1,6 +1,6 @@
 # Multimedia Explorer
 
-An open-source example app from [OpenRouter](https://openrouter.ai) that shows how to build a multi-model media generation tool where you can use any text, image, and video models together. Get access to dozens of media models just by signing in with an OpenRouter account. Try it out at https://multimedia-explorer.openrouter.ai/
+An open-source example app from [OpenRouter](https://openrouter.ai) that shows how to build a multi-model media generation tool where you can use text, image, and video models together. Get access to dozens of media models just by signing in with an OpenRouter account. Try out a hosted version at https://multimedia-explorer.openrouter.ai/
 
 ## What it does
 
