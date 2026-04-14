@@ -91,8 +91,8 @@ All user data is client-side: metadata in `localStorage`, image blobs in `Indexe
 ## Getting started
 
 ```bash
-npm install
-npm run dev
+bun install
+bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) and sign in with your OpenRouter account.
