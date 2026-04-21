@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { BrandData } from "./moodboard";
 import { DEFAULT_TEXT_MODEL, type ReferenceImage, type MediaResult } from "@/lib/types";
 import type { ModelOption } from "@/hooks/use-models";
+import { parseJsonResponse, fallbackErrorMessage } from "@/lib/safe-json";
 import AuthPrompt from "./auth-prompt";
 
 export default function GenerateForm({
@@ -112,13 +113,17 @@ export default function GenerateForm({
         }),
       });
 
-      const data = await res.json();
+      const { ok, status, data, text } = await parseJsonResponse<{
+        imageUrl?: string;
+        model?: string;
+        error?: string;
+      }>(res);
 
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to generate image");
+      if (!ok || !data) {
+        throw new Error(data?.error || fallbackErrorMessage(status, text) || "Failed to generate image");
       }
 
-      onResult({ type: "image", imageUrl: data.imageUrl, model: data.model });
+      onResult({ type: "image", imageUrl: data.imageUrl!, model: data.model! });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -151,14 +156,17 @@ export default function GenerateForm({
         }),
       });
 
-      const data = await res.json();
+      const { ok, status, data, text } = await parseJsonResponse<{
+        prompt?: string;
+        error?: string;
+      }>(res);
 
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to improve prompt");
+      if (!ok || !data) {
+        throw new Error(data?.error || fallbackErrorMessage(status, text) || "Failed to improve prompt");
       }
 
       setPreviousPrompt(prompt);
-      onPromptChange(data.prompt);
+      onPromptChange(data.prompt!);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to improve prompt");
     } finally {

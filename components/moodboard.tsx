@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { ModelOption } from "@/hooks/use-models";
+import { parseJsonResponse, fallbackErrorMessage } from "@/lib/safe-json";
 import AuthPrompt from "./auth-prompt";
 
 export interface BrandData {
@@ -89,12 +90,14 @@ export default function Moodboard({
         body: JSON.stringify(body),
       });
 
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Failed to analyze brand");
+      const { ok, status, data, text } = await parseJsonResponse<
+        BrandData & { error?: string }
+      >(res);
+
+      if (!ok || !data) {
+        throw new Error(data?.error || fallbackErrorMessage(status, text) || "Failed to analyze brand");
       }
 
-      const data: BrandData = await res.json();
       onBrandData({ ...data, generatedByModel: moodModel });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { parseJsonResponse, fallbackErrorMessage } from "@/lib/safe-json";
 
 const OPENROUTER_VIDEO_URL = "https://openrouter.ai/api/v1/videos";
 
@@ -22,13 +23,17 @@ export async function GET(
       },
     });
 
-    const data = await res.json();
+    const { ok, status, data, text } = await parseJsonResponse<{
+      error?: string | { message?: string };
+    }>(res);
 
-    if (!res.ok) {
-      return NextResponse.json(
-        { error: data.error || "Failed to poll video status" },
-        { status: res.status }
-      );
+    if (!ok || !data) {
+      const errMsg = data?.error
+        ? typeof data.error === "string"
+          ? data.error
+          : data.error.message || fallbackErrorMessage(status, text)
+        : fallbackErrorMessage(status, text);
+      return NextResponse.json({ error: errMsg }, { status });
     }
 
     return NextResponse.json(data);

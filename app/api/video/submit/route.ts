@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { parseJsonResponse, fallbackErrorMessage } from "@/lib/safe-json";
 
 const OPENROUTER_VIDEO_URL = "https://openrouter.ai/api/v1/videos";
 
@@ -42,16 +43,24 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify(payload),
     });
 
-    const data = await res.json();
+    const { ok, status, data, text } = await parseJsonResponse<{
+      id?: string;
+      error?: string | { message?: string; metadata?: { raw?: string } };
+    }>(res);
 
-    if (!res.ok || data.error) {
-      const errMsg =
-        typeof data.error === "string"
-          ? data.error
-          : data.error?.message || "Failed to submit video generation";
+    if (!ok || !data || data.error) {
+      let errMsg: string;
+      if (data?.error) {
+        errMsg =
+          typeof data.error === "string"
+            ? data.error
+            : data.error.message || data.error.metadata?.raw || fallbackErrorMessage(status, text);
+      } else {
+        errMsg = fallbackErrorMessage(status, text);
+      }
       return NextResponse.json(
         { error: errMsg },
-        { status: res.ok ? 400 : res.status }
+        { status: ok ? 400 : status }
       );
     }
 

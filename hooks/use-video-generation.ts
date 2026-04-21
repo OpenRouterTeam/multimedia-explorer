@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
+import { parseJsonResponse, fallbackErrorMessage } from "@/lib/safe-json";
 
 export type VideoStatus =
   | "idle"
@@ -89,18 +90,24 @@ export function useVideoGeneration(apiKey: string | null) {
           body: JSON.stringify(params),
         });
 
-        const data = await res.json();
+        const { ok, status, data, text } = await parseJsonResponse<{
+          id?: string;
+          error?: string;
+        }>(res);
 
-        if (!res.ok) {
+        if (!ok || !data) {
           setState((s) => ({
             ...s,
             status: "failed",
-            error: data.error || "Failed to submit video generation",
+            error:
+              data?.error ||
+              fallbackErrorMessage(status, text) ||
+              "Failed to submit video generation",
           }));
           return;
         }
 
-        const jobId = data.id as string | undefined;
+        const jobId = data.id;
         if (!jobId) {
           setState((s) => ({
             ...s,
@@ -117,7 +124,28 @@ export function useVideoGeneration(apiKey: string | null) {
             const pollRes = await fetch(`/api/video/${jobId}`, {
               headers: { Authorization: `Bearer ${apiKey}` },
             });
-            const pollData = await pollRes.json();
+            const {
+              ok: pollOk,
+              status: pollStatus,
+              data: pollData,
+              text: pollText,
+            } = await parseJsonResponse<{
+              status?: string;
+              error?: string;
+            }>(pollRes);
+
+            if (!pollOk || !pollData) {
+              stopPolling();
+              setState((s) => ({
+                ...s,
+                status: "failed",
+                error:
+                  pollData?.error ||
+                  fallbackErrorMessage(pollStatus, pollText) ||
+                  "Video generation failed",
+              }));
+              return;
+            }
 
             if (pollData.status === "in_progress") {
               setState((s) => ({ ...s, status: "in_progress" }));
