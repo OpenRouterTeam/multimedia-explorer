@@ -14,6 +14,13 @@ export function ReferencesCardHeader({ images }: { images: ReferenceImage[] }) {
   );
 }
 
+function randomId(): string {
+  return (
+    crypto.randomUUID?.() ??
+    Math.random().toString(36).slice(2) + Date.now().toString(36)
+  );
+}
+
 export function ReferencesCardBody({
   images,
   onImagesChange,
@@ -41,7 +48,7 @@ export function ReferencesCardBody({
       const reader = new FileReader();
       reader.onload = () => {
         addImage({
-          id: crypto.randomUUID(),
+          id: randomId(),
           url: reader.result as string,
           name: file.name,
         });
