@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/openrouter";
+import { fetchPublicHtml, FetchLimitError, UnsafeUrlError } from "@/lib/safe-fetch";
 
 export async function POST(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
@@ -15,22 +16,34 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   }
+  if (url !== undefined && typeof url !== "string") {
+    return NextResponse.json({ error: "url must be a string" }, { status: 400 });
+  }
+
+  const client = createClient(apiKey);
+
+  // Validate the key before doing any work on the caller's behalf.
+  try {
+    await client.apiKeys.getCurrentKeyMetadata();
+  } catch {
+    return NextResponse.json({ error: "Invalid API key" }, { status: 401 });
+  }
 
   try {
-    const client = createClient(apiKey);
-
     let systemContent: string;
     let userContent: string;
 
     if (url) {
       // URL mode: fetch and analyze website HTML
-      const pageResponse = await fetch(url, {
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 (compatible; MediaPlayground/1.0; +https://github.com/openrouter)",
-        },
-      });
-      const html = await pageResponse.text();
+      let html: string;
+      try {
+        html = await fetchPublicHtml(url);
+      } catch (err) {
+        if (err instanceof UnsafeUrlError || err instanceof FetchLimitError) {
+          return NextResponse.json({ error: err.message }, { status: 400 });
+        }
+        return NextResponse.json({ error: "Could not fetch URL" }, { status: 502 });
+      }
       const truncatedHtml = html.slice(0, 15000);
 
       systemContent = `You are a brand identity analyst. Given a website's HTML, extract the brand's visual identity and return a JSON object with these fields:
