@@ -115,17 +115,17 @@ export function OutputCardBody({
 
       {videoConfig && (
         <div className="flex gap-6 items-end">
-          <div>
+          <div className="min-w-0 flex-1">
             <label className="block text-[10px] font-medium text-muted uppercase tracking-[0.15em] mb-2">
               Duration
             </label>
-            <div className="flex gap-2">
+            <div className="flex gap-2 overflow-x-auto pb-2">
               {videoConfig.durations.map((d) => (
                 <button
                   key={d}
                   type="button"
                   onClick={() => onDurationChange?.(d)}
-                  className={`px-3 py-1.5 text-xs tracking-wide rounded-lg border transition-all cursor-pointer ${
+                  className={`shrink-0 px-3 py-1.5 text-xs tracking-wide rounded-lg border transition-all cursor-pointer ${
                     duration === d
                       ? "bg-accent text-white border-accent shadow-[0_0_10px_rgba(59,130,246,0.3)]"
                       : "bg-surface border-border text-muted hover:text-foreground hover:border-accent/30 hover:shadow-[0_0_6px_rgba(59,130,246,0.08)]"
@@ -139,7 +139,7 @@ export function OutputCardBody({
 
           {videoConfig.supportsAudio && (
             <label
-              className={`flex items-center gap-2.5 pb-0.5 ${videoConfig.requiresAudio ? "cursor-default" : "cursor-pointer"}`}
+              className={`flex shrink-0 items-center gap-2.5 pb-0.5 ${videoConfig.requiresAudio ? "cursor-default" : "cursor-pointer"}`}
               title={videoConfig.requiresAudio ? "Sora always generates audio — it cannot be disabled" : undefined}
             >
               <input
